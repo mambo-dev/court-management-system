@@ -37,7 +37,7 @@ export default function TextInput({
 
   return (
     <div className={`${className} flex flex-col w-full  gap-y-2`}>
-      <label className="text-sm text-cyan-900 font-bold">{label}</label>
+      <label className="text-sm text-slate-900 font-bold">{label}</label>
       <input
         type={type}
         name={name}

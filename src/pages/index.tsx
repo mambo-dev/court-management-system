@@ -1,17 +1,55 @@
+import axios from "axios";
 import Head from "next/head";
-
+import { useRouter } from "next/router";
+import { useState } from "react";
+import ErrorMessage from "../../components/extras/error";
+import Success from "../../components/extras/success";
 import useForm from "../../components/hooks/form";
 import Box from "../../components/utils/box";
+import Button from "../../components/utils/button";
 import Container from "../../components/utils/container";
 import TextInput from "../../components/utils/input";
+import { Error } from "../../types/types";
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState<Error[]>([]);
   const initialState = {
     username: "",
     password: "",
   };
 
-  function handleLogin(values: any) {}
+  const router = useRouter();
+
+  function handleLogin(values: any) {
+    setLoading(true);
+
+    axios
+      .post(`${process.env.NEXT_PUBLIC_URL}/api/auth/login`, {
+        ...values,
+      })
+      .then((response) => {
+        setLoading(false);
+        if (!response.data.data) {
+          setErrors([...response.data.errors]);
+        } else {
+          setSuccess(true);
+          router.push("/dashboard");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+        error.response.data.errors
+          ? setErrors([...error.response.data.errors])
+          : setErrors([
+              {
+                message: "we are sorry unexpected error occured",
+              },
+            ]);
+      });
+  }
   const { values, handleChange, handleSubmit } = useForm(
     initialState,
     handleLogin
@@ -25,24 +63,40 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container centered>
-        <Box>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-y-3">
-            <TextInput
-              label="username"
-              type="text"
-              handleChange={handleChange}
-              name="username"
-              value={values.username}
-            />
-            <TextInput
-              label="password"
-              type="password"
-              handleChange={handleChange}
-              name="password"
-              value={values.password}
-            />
-          </form>
-        </Box>
+        <div className="w-[95%] sm:w-3/4 md:w-[400px]  m-auto ">
+          <Box>
+            <div className="w-full flex items-center justify-center py-2  font-medium text-slate-800 text-2xl ">
+              <span>Welcome</span>
+            </div>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-y-3 py-4 mb-2 px-1 w-full"
+            >
+              <TextInput
+                label="username"
+                type="text"
+                handleChange={handleChange}
+                name="username"
+                value={values.username}
+              />
+              <TextInput
+                label="password"
+                type="password"
+                handleChange={handleChange}
+                name="password"
+                value={values.password}
+              />
+              <Button text="login" type="submit" loading={loading} />
+            </form>
+            <div className="w-full my-2">
+              <ErrorMessage errors={errors} />
+              <Success
+                message="succesfully logged in !! redirecting..."
+                success={success}
+              />
+            </div>
+          </Box>
+        </div>
       </Container>
     </>
   );

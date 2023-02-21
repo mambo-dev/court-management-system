@@ -1,4 +1,5 @@
 import React, { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+import Loading from "../extras/loading";
 
 type Props = {
   default?: boolean;
@@ -8,6 +9,7 @@ type Props = {
   positive?: boolean;
   dark?: boolean;
   icon?: any;
+  loading?: boolean;
 };
 
 export default function Button({
@@ -17,6 +19,7 @@ export default function Button({
   positive,
   dark,
   icon,
+  loading,
 }: Props) {
   if (error) {
     return (
@@ -52,11 +55,11 @@ export default function Button({
   }
   return (
     <button
-      className="p-2 w-full shadow rounded-md inline-flex items-center justify-center "
+      className="p-2 w-full shadow rounded-md inline-flex items-center justify-center gap-x-2 bg-black text-white font-medium"
       type={type}
     >
-      {icon}
-      {text}
+      {loading ? <Loading /> : icon}
+      {loading ? "loading..." : text}
     </button>
   );
 }
