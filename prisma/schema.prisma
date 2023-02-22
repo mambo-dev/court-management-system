@@ -11,13 +11,76 @@ datasource db {
 }
 
 model Login {
-  login_id       Int    @id @unique @default(autoincrement())
+  login_id       Int      @id @unique @default(autoincrement())
   login_username String
   login_password String
   login_role     Role
+  Judge          Judge?
+  Citizen        Citizen?
+  Police         Police?
+  Lawyer         Lawyer?
+  Admin          Admin?
 }
 
 enum Role {
   admin
   judge
+  citizen
+  police
+  lawyer
+}
+
+model Judge {
+  judge_id          Int    @id @unique @default(autoincrement())
+  judge_full_name   String
+  judge_email       String @unique
+  judge_gender      String
+  judge_dob         String
+  judge_national_id String
+  judge_login       Login  @relation(fields: [judge_login_id], onDelete: Cascade, references: [login_id])
+  judge_login_id    Int    @unique
+}
+
+model Citizen {
+  citizen_id          Int    @id @unique @default(autoincrement())
+  citizen_full_name   String
+  citizen_email       String @unique
+  citizen_gender      String
+  citizen_dob         String
+  citizen_national_id String
+  citizen_login       Login  @relation(fields: [citizen_login_id], onDelete: Cascade, references: [login_id])
+  citizen_login_id    Int    @unique
+}
+
+model Police {
+  police_id          Int    @id @unique @default(autoincrement())
+  police_full_name   String
+  police_email       String @unique
+  police_gender      String
+  police_dob         String
+  police_national_id String
+  police_login       Login  @relation(fields: [police_login_id], onDelete: Cascade, references: [login_id])
+  police_login_id    Int    @unique
+}
+
+model Lawyer {
+  lawayer_id         Int    @id @unique @default(autoincrement())
+  lawyer_full_name   String
+  lawyer_email       String @unique
+  lawyer_gender      String
+  lawyer_dob         String
+  lawyer_national_id String
+  lawyer_login       Login  @relation(fields: [lawyer_login_id], onDelete: Cascade, references: [login_id])
+  lawyer_login_id    Int    @unique
+}
+
+model Admin {
+  admin_id          Int    @id @unique @default(autoincrement())
+  admin_full_name   String
+  admin_email       String @unique
+  admin_gender      String
+  admin_dob         String
+  admin_national_id String
+  admin_login       Login  @relation(fields: [admin_login_id], onDelete: Cascade, references: [login_id])
+  admin_login_id    Int    @unique
 }
