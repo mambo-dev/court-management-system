@@ -88,7 +88,7 @@ export default function Home() {
               />
               <Button text="login" type="submit" loading={loading} />
             </form>
-            <div className="w-full my-2">
+            <div className="w-full my-2 flex items-center justify-center">
               <ErrorMessage errors={errors} />
               <Success
                 message="succesfully logged in !! redirecting..."

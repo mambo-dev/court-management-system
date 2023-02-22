@@ -46,7 +46,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
                   </Link>
                 )}
               </Menu.Item>
-              <div className="flex md:hidden flex-col">
+              <div className="flex  flex-col">
                 {navLinks.map((link: any, index: number) => {
                   return (
                     <Menu.Item key={index}>
