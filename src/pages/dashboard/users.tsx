@@ -10,7 +10,9 @@ import React, { useState } from "react";
 import Table from "../../../components/extras/table";
 import DashboardLayout from "../../../components/layout/dashboard";
 import AddUser from "../../../components/users/add-user";
+import EditUser from "../../../components/users/edit-user";
 import Button from "../../../components/utils/button";
+import Modal from "../../../components/utils/modal";
 import SidePanel from "../../../components/utils/side-panel";
 import prisma from "../../../lib/prisma";
 import { DecodedToken } from "../../../types/types";
@@ -20,7 +22,11 @@ type Props = {
 };
 
 export default function Users({ data }: Props) {
-  const { token, user, users } = data;
+  const { token, user: loggedinUser, users } = data;
+  const [openPanel, setOpenPanel] = useState(false);
+  const [openEditPanel, setOpenEditPanel] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<user | null>(null);
 
   const headers = [
     "name",
@@ -32,11 +38,10 @@ export default function Users({ data }: Props) {
     "edit",
     "delete",
   ];
-  const [openPanel, setOpenPanel] = useState(false);
 
   return (
     <div className="w-full h-full flex flex-col gap-y-4 px-2 py-4">
-      {user?.login_role === "admin" && (
+      {loggedinUser?.login_role === "admin" && (
         <div className="w-full flex items-center justify-end ">
           <div className="w-32">
             <Button
@@ -61,7 +66,7 @@ export default function Users({ data }: Props) {
 
       <div className="">
         <Table headers={headers}>
-          {users?.map((user, index) => {
+          {users?.map((user) => {
             return (
               <tr key={user.id} className="border-b">
                 <th
@@ -75,26 +80,53 @@ export default function Users({ data }: Props) {
                 <td className="py-4">{user.nationalId}</td>
                 <td className="py-4 text-green-400 font-medium">{user.role}</td>
                 <td className="py-4">{user.gender}</td>
-                <td className="py-4  pr-2">
-                  <Button
-                    edit
-                    type="button"
-                    icon={
-                      <PencilSquareIcon className="w-5 h-5 font-medium  " />
-                    }
-                  />
-                </td>
-                <td className="py-4 pr-2">
-                  <Button
-                    error
-                    type="button"
-                    icon={<TrashIcon className="w-5 h-5 font-medium  " />}
-                  />
-                </td>
+                {loggedinUser?.login_role === "admin" && (
+                  <td className="py-4  pr-2">
+                    <Button
+                      edit
+                      onClick={() => {
+                        setOpenEditPanel(true);
+                        setSelectedUser(user);
+                      }}
+                      type="button"
+                      icon={
+                        <PencilSquareIcon className="w-5 h-5 font-medium  " />
+                      }
+                    />
+                  </td>
+                )}
+                {loggedinUser?.login_role === "admin" && (
+                  <td className="py-4 pr-2">
+                    <Button
+                      error
+                      onClick={() => {
+                        setOpenDeleteModal(true);
+                        setSelectedUser(user);
+                      }}
+                      type="button"
+                      icon={<TrashIcon className="w-5 h-5 font-medium  " />}
+                    />
+                  </td>
+                )}
               </tr>
             );
           })}
         </Table>
+        <SidePanel
+          open={openEditPanel}
+          setOpen={setOpenEditPanel}
+          title="edit user"
+          span
+        >
+          <EditUser user={selectedUser} />
+        </SidePanel>
+        <Modal
+          isOpen={openDeleteModal}
+          setIsOpen={setOpenDeleteModal}
+          title="delete user"
+        >
+          hello
+        </Modal>
       </div>
     </div>
   );
@@ -105,7 +137,7 @@ type Data = {
   users: user[] | null;
   token: string | null;
 };
-type user = {
+export type user = {
   id: number;
   name: string | undefined;
   email: string | undefined;
@@ -113,6 +145,7 @@ type user = {
   nationalId: string | undefined;
   role: string | undefined;
   gender: string | undefined;
+  dob: string | undefined;
 };
 
 //@ts-ignore
@@ -225,6 +258,7 @@ function transform(
             nationalId: user.Judge?.judge_national_id,
             role: user.login_role,
             gender: user.Judge?.judge_gender,
+            dob: user.Judge?.judge_dob,
           };
         case "admin":
           return {
@@ -235,6 +269,7 @@ function transform(
             nationalId: user.Admin?.admin_national_id,
             role: user.login_role,
             gender: user.Admin?.admin_gender,
+            dob: user.Admin?.admin_dob,
           };
         case "lawyer":
           return {
@@ -245,6 +280,7 @@ function transform(
             nationalId: user.Lawyer?.lawyer_national_id,
             role: user.login_role,
             gender: user.Lawyer?.lawyer_gender,
+            dob: user.Lawyer?.lawyer_dob,
           };
         case "police":
           return {
@@ -255,6 +291,7 @@ function transform(
             nationalId: user.Police?.police_national_id,
             role: user.login_role,
             gender: user.Police?.police_gender,
+            dob: user.Police?.police_dob,
           };
         case "citizen":
           return {
@@ -265,6 +302,7 @@ function transform(
             nationalId: user.Citizen?.citizen_national_id,
             role: user.login_role,
             gender: user.Citizen?.citizen_gender,
+            dob: user.Citizen?.citizen_dob,
           };
 
         default:
