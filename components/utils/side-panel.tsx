@@ -8,6 +8,7 @@ type Side = {
   title: string;
   children: any;
   span?: boolean;
+  span_range?: string;
 };
 export default function SidePanel({
   open,
@@ -15,6 +16,7 @@ export default function SidePanel({
   title,
   children,
   span,
+  span_range,
 }: Side) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -45,8 +47,8 @@ export default function SidePanel({
               >
                 <Dialog.Panel
                   className={`pointer-events-auto relative w-screen  ${
-                    span ? "max-w-2xl" : "max-w-lg"
-                  }`}
+                    span ? (span_range ? span_range : `max-w-2xl`) : "max-w-lg"
+                  }  `}
                 >
                   <Transition.Child
                     as={Fragment}

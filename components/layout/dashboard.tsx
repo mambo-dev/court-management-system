@@ -1,6 +1,9 @@
 import {
   Bars3Icon,
+  DocumentChartBarIcon,
+  DocumentTextIcon,
   PresentationChartBarIcon,
+  Square2StackIcon,
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -33,6 +36,27 @@ const sideLinks = [
     link: "/dashboard/users",
     icon: (
       <UsersIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
+  },
+  {
+    name: "cases",
+    link: "/dashboard/cases",
+    icon: (
+      <DocumentTextIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
+  },
+  {
+    name: "hearings",
+    link: "/dashboard/hearings",
+    icon: (
+      <Square2StackIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
+  },
+  {
+    name: "reports",
+    link: "/dashboard/reports",
+    icon: (
+      <DocumentChartBarIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
     ),
   },
 ];

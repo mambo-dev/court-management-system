@@ -40,6 +40,7 @@ model Judge {
   judge_national_id  String
   judge_login        Login  @relation(fields: [judge_login_id], onDelete: Cascade, references: [login_id])
   judge_login_id     Int    @unique
+  Case               Case?
 }
 
 model Citizen {
@@ -52,6 +53,7 @@ model Citizen {
   citizen_national_id  String
   citizen_login        Login  @relation(fields: [citizen_login_id], onDelete: Cascade, references: [login_id])
   citizen_login_id     Int    @unique
+  Case                 Case[]
 }
 
 model Police {
@@ -67,7 +69,7 @@ model Police {
 }
 
 model Lawyer {
-  lawayer_id          Int    @id @unique @default(autoincrement())
+  lawyer_id           Int    @id @unique @default(autoincrement())
   lawyer_full_name    String
   lawyer_email        String @unique
   lawyer_gender       String
@@ -76,6 +78,7 @@ model Lawyer {
   lawyer_national_id  String
   lawyer_login        Login  @relation(fields: [lawyer_login_id], onDelete: Cascade, references: [login_id])
   lawyer_login_id     Int    @unique
+  Case                Case[]
 }
 
 model Admin {
@@ -88,4 +91,37 @@ model Admin {
   admin_national_id  String
   admin_login        Login  @relation(fields: [admin_login_id], onDelete: Cascade, references: [login_id])
   admin_login_id     Int    @unique
+}
+
+model Case {
+  case_id           Int       @id @unique @default(autoincrement())
+  case_name         String
+  case_description  String
+  case_status       Status
+  case_hearing_date DateTime
+  case_evidence     String[]
+  case_citizen      Citizen   @relation(fields: [case_citizen_id], onDelete: Cascade, references: [citizen_id])
+  case_citizen_id   Int
+  case_plaintiff    String
+  case_defendant    String
+  case_lawyer       Lawyer    @relation(fields: [case_lawyer_id], onDelete: Cascade, references: [lawyer_id])
+  case_lawyer_id    Int
+  case_judge        Judge     @relation(fields: [case_judge_id], onDelete: Cascade, references: [judge_id])
+  case_judge_id     Int       @unique
+  Hearing           Hearing[]
+}
+
+model Hearing {
+  hearing_id        Int      @id @unique @default(autoincrement())
+  hearing_date      DateTime
+  hearing_location  String
+  hearing_outcome   String
+  hearing_documents String[]
+  hearing_case      Case     @relation(fields: [hearing_case_id], onDelete: Cascade, references: [case_id])
+  hearing_case_id   Int
+}
+
+enum Status {
+  closed
+  open
 }
