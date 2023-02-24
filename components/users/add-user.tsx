@@ -36,6 +36,7 @@ export default function AddUser({ token }: Props) {
 
   const addUser = (values: any) => {
     setLoading(true);
+    setErrors([]);
     axios
       .post(
         `${process.env.NEXT_PUBLIC_URL}/api/users/add-user`,
@@ -45,7 +46,7 @@ export default function AddUser({ token }: Props) {
         },
         {
           headers: {
-            Authorization: ``,
+            Authorization: `Bearer ${token}`,
           },
         }
       )
@@ -64,6 +65,7 @@ export default function AddUser({ token }: Props) {
       .catch((error) => {
         console.log(error);
         setLoading(false);
+
         error.response.data.errors && error.response.data.errors.length > 0
           ? setErrors([...error.response.data.errors])
           : setErrors([

@@ -2,9 +2,11 @@
 import { Login } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
-import { Error } from "../../../../types/types";
+import { DecodedToken, Error } from "../../../../types/types";
 import { handleBodyNotEmpty } from "../../../../utils/validation";
-
+import * as argon2 from "argon2";
+import { handleAuthorization } from "../../../../utils/authorization";
+import jwtDecode from "jwt-decode";
 type Response = {
   data: Login | null;
   errors: Error[] | null;
@@ -26,6 +28,38 @@ export default async function handler(
       });
     }
 
+    if (!(await handleAuthorization(req))) {
+      return res.status(401).json({
+        data: null,
+        errors: [
+          {
+            message: "action cannot be allowed",
+          },
+        ],
+      });
+    }
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    const decodedToken: DecodedToken = await jwtDecode(`${token}`);
+
+    const user = await prisma.login.findUnique({
+      where: {
+        login_id: decodedToken.user_id,
+      },
+    });
+
+    if (user?.login_role !== "admin") {
+      return res.status(401).json({
+        data: null,
+        errors: [
+          {
+            message: "cannot complete this action",
+          },
+        ],
+      });
+    }
+
     const noEmptyValues = handleBodyNotEmpty(req.body);
 
     if (noEmptyValues.length > 0) {
@@ -37,7 +71,7 @@ export default async function handler(
 
     const {
       username,
-      password,
+      password: unhashedPassword,
       role,
       firstName,
       secondName,
@@ -47,6 +81,10 @@ export default async function handler(
       phoneNumber,
       gender,
     } = req.body;
+
+    let password = await argon2.hash(unhashedPassword, {
+      hashLength: 10,
+    });
 
     switch (role) {
       case "judge":

@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import Table from "../../../components/extras/table";
 import DashboardLayout from "../../../components/layout/dashboard";
 import AddUser from "../../../components/users/add-user";
+import DeleteUser from "../../../components/users/del-user";
 import EditUser from "../../../components/users/edit-user";
 import Button from "../../../components/utils/button";
 import Modal from "../../../components/utils/modal";
@@ -26,18 +27,22 @@ export default function Users({ data }: Props) {
   const [openPanel, setOpenPanel] = useState(false);
   const [openEditPanel, setOpenEditPanel] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<user | null>(null);
-
-  const headers = [
-    "name",
-    "email",
-    "phone",
-    "national id",
-    "role",
-    "gender",
-    "edit",
-    "delete",
-  ];
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const userData = transform(users);
+  const isAdmin = loggedinUser?.login_role === "admin";
+  let headers;
+  isAdmin
+    ? (headers = [
+        "name",
+        "email",
+        "phone",
+        "national id",
+        "role",
+        "gender",
+        "edit",
+        "delete",
+      ])
+    : (headers = ["name", "email", "phone", "national id", "role", "gender"]);
 
   return (
     <div className="w-full h-full flex flex-col gap-y-4 px-2 py-4">
@@ -66,7 +71,7 @@ export default function Users({ data }: Props) {
 
       <div className="">
         <Table headers={headers}>
-          {users?.map((user) => {
+          {userData?.map((user) => {
             return (
               <tr key={user.id} className="border-b">
                 <th
@@ -118,14 +123,18 @@ export default function Users({ data }: Props) {
           title="edit user"
           span
         >
-          <EditUser user={selectedUser} />
+          <EditUser user={selectedUser} token={token} />
         </SidePanel>
         <Modal
           isOpen={openDeleteModal}
           setIsOpen={setOpenDeleteModal}
           title="delete user"
         >
-          hello
+          <DeleteUser
+            setIsOpen={setOpenDeleteModal}
+            token={token}
+            user={selectedUser}
+          />
         </Modal>
       </div>
     </div>
@@ -134,7 +143,15 @@ export default function Users({ data }: Props) {
 
 type Data = {
   user: Login | null;
-  users: user[] | null;
+  users:
+    | (Login & {
+        Admin: Admin | null;
+        Citizen: Citizen | null;
+        Judge: Judge | null;
+        Lawyer: Lawyer | null;
+        Police: Police | null;
+      })[]
+    | null;
   token: string | null;
 };
 export type user = {
@@ -186,7 +203,6 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
     },
   });
 
-  console.log(user?.login_role);
   if (user?.login_role !== "judge" && user?.login_role !== "admin") {
     return {
       redirect: {
@@ -196,7 +212,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
     };
   }
 
-  await prisma.login.findMany({
+  const users = await prisma.login.findMany({
     include: {
       Admin: true,
       Citizen: true,
@@ -205,18 +221,6 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
       Police: true,
     },
   });
-
-  const users = transform(
-    await prisma.login.findMany({
-      include: {
-        Admin: true,
-        Citizen: true,
-        Judge: true,
-        Lawyer: true,
-        Police: true,
-      },
-    })
-  );
 
   return {
     props: {
@@ -230,14 +234,19 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 };
 
 function transform(
-  users: (Login & {
-    Judge: Judge | null;
-    Citizen: Citizen | null;
-    Police: Police | null;
-    Lawyer: Lawyer | null;
-    Admin: Admin | null;
-  })[]
+  users:
+    | (Login & {
+        Judge: Judge | null;
+        Citizen: Citizen | null;
+        Police: Police | null;
+        Lawyer: Lawyer | null;
+        Admin: Admin | null;
+      })[]
+    | null
 ) {
+  if (!users) {
+    return null;
+  }
   const data = users.map(
     (
       user: Login & {

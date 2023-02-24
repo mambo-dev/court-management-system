@@ -13,9 +13,10 @@ import Select from "../utils/select";
 
 type Props = {
   user: user | null;
+  token: string | null;
 };
 
-export default function EditUser({ user }: Props) {
+export default function EditUser({ user, token }: Props) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Error[]>([]);
@@ -37,14 +38,13 @@ export default function EditUser({ user }: Props) {
     setLoading(true);
     axios
       .put(
-        `${process.env.NEXT_PUBLIC_URL}/api/users/add-user`,
+        `${process.env.NEXT_PUBLIC_URL}/api/users/edit-user?user_id=${user?.id}`,
         {
           ...values,
-          password: values.nationalId,
         },
         {
           headers: {
-            Authorization: ``,
+            Authorization: `Bearer ${token}`,
           },
         }
       )

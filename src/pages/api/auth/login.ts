@@ -19,6 +19,7 @@ export default async function handler(
   res: NextApiResponse<Response>
 ) {
   try {
+    console.log(req.body);
     if (req.method !== "POST") {
       return res.status(403).json({
         data: null,

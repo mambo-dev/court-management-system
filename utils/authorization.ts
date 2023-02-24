@@ -1,5 +1,8 @@
 import { NextApiRequest } from "next";
 import jwt from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
+import { DecodedToken } from "../types/types";
+import prisma from "../lib/prisma";
 
 export async function handleAuthorization(req: NextApiRequest) {
   try {

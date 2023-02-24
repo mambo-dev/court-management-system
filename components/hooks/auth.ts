@@ -9,7 +9,7 @@ export const useAuth = () => {
       .get(`${process.env.NEXT_PUBLIC_URL}/api/auth/logout`, {})
       .then((response) => {
         console.log(response);
-        router.replace("/auth/login");
+        router.replace("/");
       });
   };
 
