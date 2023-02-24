@@ -38,7 +38,7 @@ const sideLinks = [
 ];
 
 export default function DashboardLayout({ children }: Props) {
-  const [openNavigation, setOpenNavigation] = useState(true);
+  const [openNavigation, setOpenNavigation] = useState(false);
   return (
     <Container>
       <header className="h-16 w-full bg-white border-b border-slate-300 shadow flex items-center justify-between py-2 px-2">

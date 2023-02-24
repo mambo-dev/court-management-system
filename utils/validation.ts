@@ -69,3 +69,16 @@ export function handleLoginValidation(values: LoginValidationValues) {
     valid: errors.length <= 0,
   };
 }
+
+export function handleBodyNotEmpty(body: any) {
+  const errors: Error[] = [];
+  Object.keys(body).forEach((values) => {
+    if (body[values] === "") {
+      errors.push({
+        message: `${values} must not be empty`,
+      });
+    }
+  });
+
+  return errors;
+}

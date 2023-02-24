@@ -19,7 +19,7 @@ export default function Select({
 }: Select) {
   return (
     <div className="flex flex-col w-full gap-y-2">
-      <label className="text-sm text-teal-900 font-bold">{label}</label>
+      <label className="text-sm text-slate-900 font-bold">{label}</label>
       <select
         id={name}
         name={name}

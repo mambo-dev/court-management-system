@@ -10,6 +10,8 @@ type Input = {
   textArea?: boolean;
   name: string;
   className?: string;
+  disabled?: boolean;
+  placehodler?: string;
 };
 
 export default function TextInput({
@@ -20,6 +22,8 @@ export default function TextInput({
   textArea,
   name,
   className,
+  disabled,
+  placehodler,
 }: Input) {
   if (textArea) {
     return (
@@ -42,8 +46,10 @@ export default function TextInput({
         type={type}
         name={name}
         value={value}
+        disabled={disabled}
         onChange={handleChange}
-        className="py-2 px-1 rounded  border border-gray-300 focus:outline-none focus:ring-2 focus:border-cyan-200 focus:shadow-sm focus:shadow-cyan-200  focus:ring-cyan-100 "
+        placeholder={placehodler}
+        className="py-2 disabled:bg-slate-300 placeholder:font-medium placeholder:text-slate-700 px-1 rounded  border border-gray-300 focus:outline-none focus:ring-2 focus:border-cyan-200 focus:shadow-sm focus:shadow-cyan-200  focus:ring-cyan-100 "
       />
     </div>
   );
