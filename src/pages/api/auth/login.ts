@@ -6,6 +6,8 @@ import { Error } from "../../../../types/types";
 import { checkUserExists } from "../../../../utils/user";
 import { handleLoginValidation } from "../../../../utils/validation";
 import * as argon2 from "argon2";
+import cookie from "cookie";
+import jwt from "jsonwebtoken";
 
 type Response = {
   data: Login | null;
@@ -66,6 +68,26 @@ export default async function handler(
         ],
       });
     }
+
+    var access_token = jwt.sign(
+      { user_id: login?.login_id, username: login?.login_username },
+      `${process.env.JWT_SECRET}`,
+      {
+        expiresIn: "2h",
+      }
+    );
+
+    //send cookie with jwt
+    res.setHeader(
+      "Set-Cookie",
+      cookie.serialize("access_token", access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "development",
+        maxAge: 60 * 120,
+        sameSite: "strict",
+        path: "/",
+      })
+    );
 
     return res.status(200).json({
       data: login,

@@ -1,4 +1,10 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  PresentationChartBarIcon,
+  UsersIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
 import React, { JSXElementConstructor, useState } from "react";
 import Container from "../utils/container";
 import MenuOptions from "../utils/menu";
@@ -11,6 +17,23 @@ const navLinks = [
   {
     name: "settings",
     link: "/settings",
+  },
+];
+
+const sideLinks = [
+  {
+    name: "dashboard",
+    link: "/dashboard",
+    icon: (
+      <PresentationChartBarIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
+  },
+  {
+    name: "users",
+    link: "/dashboard/users",
+    icon: (
+      <UsersIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
   },
 ];
 
@@ -35,9 +58,44 @@ export default function DashboardLayout({ children }: Props) {
         <nav
           className={` ${
             !openNavigation && "hidden"
-          } w-full top-0 bottom-0 left-0 right-0 border-r shadow border-slate-300 absolute  md:relative md:w-[20%]  bg-white h-full `}
+          } w-full py-5 flex flex-col gap-y-3  px-2 top-0 bottom-0 left-0 right-0 border-r shadow border-slate-300 absolute  md:relative md:w-[20%]  bg-white h-full `}
         >
-          <div className="md:hidden flex"> </div>
+          <button
+            onClick={() => setOpenNavigation(false)}
+            className="md:hidden flex ml-auto"
+          >
+            <XMarkIcon className="w-7 h-7" />{" "}
+          </button>
+          <ul className="flex flex-col items-center justify-center gap-y-2 ">
+            {sideLinks.map(
+              (
+                link: {
+                  name: string;
+                  link: string;
+                  icon: any;
+                },
+                index: number
+              ) => {
+                return (
+                  <div key={index} className="w-full">
+                    <Link href={`${link.link}`}>
+                      <li
+                        onClick={() => {
+                          window.innerWidth <= 780 && setOpenNavigation(false);
+                        }}
+                        className="py-3 group flex items-center  gap-x-2 justify-start  w-full rounded px-2 hover:bg-blue-100 focus:bg-blue-100 "
+                      >
+                        {link.icon}
+                        <span className="font-semibold text-slate-500  group-hover:text-blue-500 group-focus:text-blue-600">
+                          {link.name}{" "}
+                        </span>
+                      </li>
+                    </Link>
+                  </div>
+                );
+              }
+            )}
+          </ul>
         </nav>
         {children}
       </div>

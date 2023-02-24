@@ -28,6 +28,8 @@ export default function handler(
       });
     }
 
+    //admins only access
+
     res.status(200).json({
       data: {
         username: "",

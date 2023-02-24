@@ -63,7 +63,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container centered>
-        <div className="w-[95%] sm:w-3/4 md:w-[400px]  m-auto ">
+        <div className="w-[95%] sm:w-3/4 md:w-[400px]  m-auto bg-white">
           <Box>
             <div className="w-full flex items-center justify-center py-2  font-medium text-slate-800 text-2xl ">
               <span>Welcome</span>

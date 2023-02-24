@@ -1,4 +1,8 @@
-import React, { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+import React, {
+  ButtonHTMLAttributes,
+  DetailedHTMLProps,
+  MouseEventHandler,
+} from "react";
 import Loading from "../extras/loading";
 
 type Props = {
@@ -10,6 +14,7 @@ type Props = {
   dark?: boolean;
   icon?: any;
   loading?: boolean;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function Button({
@@ -20,6 +25,7 @@ export default function Button({
   dark,
   icon,
   loading,
+  onClick,
 }: Props) {
   if (error) {
     return (
@@ -55,7 +61,8 @@ export default function Button({
   }
   return (
     <button
-      className="p-2 w-full shadow rounded-md inline-flex items-center justify-center gap-x-2 bg-black text-white font-medium"
+      onClick={onClick}
+      className="py-2 px-3 hover:bg-opacity-70 focus:bg-black/80  w-full shadow rounded-md inline-flex items-center justify-center gap-x-2 bg-black text-white font-medium"
       type={type}
     >
       {loading ? <Loading /> : icon}
