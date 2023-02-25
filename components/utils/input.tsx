@@ -28,7 +28,7 @@ export default function TextInput({
   if (textArea) {
     return (
       <div className="flex flex-col w-full gap-y-2">
-        <label className="text-sm text-teal-900 font-bold">{label}</label>
+        <label className="text-sm text-slate-900 font-bold">{label}</label>
         <textarea
           name={name}
           value={value}

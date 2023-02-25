@@ -7,7 +7,8 @@ type Select = {
   value: string | number;
   label: string;
   name: string;
-  options: string[];
+  options: string[] | any[];
+  onClick?: any;
 };
 
 export default function Select({
@@ -16,6 +17,7 @@ export default function Select({
   label,
   name,
   options,
+  onClick,
 }: Select) {
   return (
     <div className="flex flex-col w-full gap-y-2">
@@ -24,6 +26,7 @@ export default function Select({
         id={name}
         name={name}
         onChange={handleChange}
+        onClick={onClick}
         value={value}
         autoComplete="country-name"
         className=" py-2 px-1 rounded bg-white  border border-gray-300 focus:outline-none focus:ring-2 focus:border-teal-200 focus:shadow-sm focus:shadow-teal-200  focus:ring-teal-100 "

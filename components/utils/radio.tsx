@@ -8,6 +8,7 @@ type Radio = {
   value: any;
   label: string;
   name: string;
+  disabled?: boolean;
 };
 
 export default function Radio({
@@ -16,6 +17,7 @@ export default function Radio({
   checked,
   value,
   name,
+  disabled,
 }: Radio) {
   return (
     <div className="flex items-center justify-between gap-x-2">
@@ -25,6 +27,7 @@ export default function Radio({
         checked={checked}
         name={name}
         type="radio"
+        disabled={disabled}
         className="h-4 w-4 border-gray-300 text-teal-600 focus:ring-teal-200 "
       />
       <label

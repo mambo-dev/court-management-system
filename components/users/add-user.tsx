@@ -22,7 +22,7 @@ export default function AddUser({ token }: Props) {
   const initialState = {
     username: "",
     password: "",
-    role: "",
+    role: "judge",
     firstName: "",
     secondName: "",
     nationalId: "",

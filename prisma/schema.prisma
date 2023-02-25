@@ -44,16 +44,22 @@ model Judge {
 }
 
 model Citizen {
-  citizen_id           Int    @id @unique @default(autoincrement())
+  citizen_id           Int           @id @unique @default(autoincrement())
   citizen_full_name    String
-  citizen_email        String @unique
+  citizen_email        String        @unique
   citizen_gender       String
   citizen_dob          String
+  citizen_type         CitizenStand?
   citizen_phone_number String
   citizen_national_id  String
-  citizen_login        Login  @relation(fields: [citizen_login_id], onDelete: Cascade, references: [login_id])
-  citizen_login_id     Int    @unique
+  citizen_login        Login         @relation(fields: [citizen_login_id], onDelete: Cascade, references: [login_id])
+  citizen_login_id     Int           @unique
   Case                 Case[]
+}
+
+enum CitizenStand {
+  plaintiff
+  defendant
 }
 
 model Police {

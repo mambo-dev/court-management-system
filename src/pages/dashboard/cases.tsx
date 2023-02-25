@@ -1,4 +1,4 @@
-import { UserPlusIcon } from "@heroicons/react/24/outline";
+import { FolderPlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import jwtDecode from "jwt-decode";
 import { GetServerSideProps } from "next";
 import React, { useState } from "react";
@@ -27,15 +27,15 @@ export default function Case({ data }: Props) {
                 text="new case"
                 type="button"
                 icon={
-                  <UserPlusIcon className="w-4 h-4 font-medium " fill="white" />
+                  <FolderPlusIcon className="w-5 h-5 font-medium text-white " />
                 }
               />
               <SidePanel
                 span
-                span_range="max-w-4xl"
+                span_range="max-w-5xl"
                 open={openPanel}
                 setOpen={setOpenPanel}
-                title="new user"
+                title="new case"
               >
                 <NewCase token={token} />
               </SidePanel>
