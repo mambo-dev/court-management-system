@@ -1,5 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Admin, Citizen, Judge, Lawyer, Login, Police } from "@prisma/client";
+import {
+  Admin,
+  Citizen,
+  Judge,
+  Lawyer,
+  Login,
+  Police,
+  Role,
+} from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 import { DecodedToken, Error } from "../../../../types/types";
@@ -8,7 +16,13 @@ import * as argon2 from "argon2";
 import { handleAuthorization } from "../../../../utils/authorization";
 import jwtDecode from "jwt-decode";
 type Response = {
-  data: any | null;
+  data:
+    | {
+        id: number;
+        full_name: string | undefined;
+        role: Role;
+      }[]
+    | null;
   errors: Error[] | null;
 };
 
@@ -71,70 +85,52 @@ export default async function handler(
         ],
       });
     }
-    const queryUser = await prisma.login.findUnique({
+
+    const queryUsers = await prisma.login.findMany({
       where: {
-        login_username: `${query}`,
+        OR: {
+          Citizen: {
+            citizen_full_name: {
+              search: `${query}`,
+            },
+          },
+          Judge: {
+            judge_full_name: {
+              search: `${query}`,
+            },
+          },
+          Lawyer: {
+            lawyer_full_name: {
+              search: `${query}`,
+            },
+          },
+        },
+      },
+      select: {
+        Judge: true,
+        Citizen: true,
+        Lawyer: true,
+        login_password: false,
+        login_role: true,
+        login_id: true,
       },
     });
 
-    switch (queryUser?.login_role) {
-      case "judge":
-        const judge = await prisma.judge.findUnique({
-          where: {
-            judge_login_id: queryUser.login_id,
-          },
-        });
+    const returnUsers = queryUsers.map((user) => {
+      return {
+        id: user.login_id,
+        full_name:
+          user.Citizen?.citizen_full_name ||
+          user.Judge?.judge_full_name ||
+          user.Lawyer?.lawyer_full_name,
+        role: user.login_role,
+      };
+    });
 
-        return res.status(200).json({
-          data: {
-            id: queryUser?.login_id,
-            full_name: judge?.judge_full_name,
-            role: queryUser.login_role,
-          },
-          errors: null,
-        });
-      case "citizen":
-        const citizen = await prisma.citizen.findUnique({
-          where: {
-            citizen_login_id: queryUser.login_id,
-          },
-        });
-
-        return res.status(200).json({
-          data: {
-            id: queryUser?.login_id,
-            full_name: citizen?.citizen_full_name,
-            role: queryUser.login_role,
-          },
-          errors: null,
-        });
-
-      case "lawyer":
-        const lawyer = await prisma.lawyer.findUnique({
-          where: {
-            lawyer_login_id: queryUser.login_id,
-          },
-        });
-
-        return res.status(200).json({
-          data: {
-            id: queryUser?.login_id,
-            full_name: lawyer?.lawyer_full_name,
-            role: queryUser.login_role,
-          },
-          errors: null,
-        });
-
-      default:
-        return res.status(200).json({
-          data: null,
-          errors: [
-            {
-              message: "invalid role",
-            },
-          ],
-        });
-    }
+    return res.status(200).json({
+      data: returnUsers,
+      errors: null,
+    });
   } catch (error: any) {
     return res.status(500).json({
       data: null,
