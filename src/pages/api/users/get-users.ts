@@ -8,7 +8,7 @@ import * as argon2 from "argon2";
 import { handleAuthorization } from "../../../../utils/authorization";
 import jwtDecode from "jwt-decode";
 type Response = {
-  data: Login[] | null;
+  data: any | null;
   errors: Error[] | null;
 };
 
@@ -58,29 +58,83 @@ export default async function handler(
       });
     }
 
-    const { user_type } = req.query;
+    //username sent by query
+    const { query } = req.query;
 
-    const getUsers = await prisma.login.findMany({
+    if (`${query}`.length <= 0) {
+      return res.status(200).json({
+        data: null,
+        errors: [
+          {
+            message: "query must be provided",
+          },
+        ],
+      });
+    }
+    const queryUser = await prisma.login.findUnique({
       where: {
-        //@ts-ignore
-        login_role: `${user_type}`,
-      },
-
-      select: {
-        Citizen: true,
-        Judge: true,
-        Lawyer: true,
-        Police: true,
-        login_password: false,
-        login_id: true,
-        login_role: true,
+        login_username: `${query}`,
       },
     });
 
-    return res.status(200).json({
-      data: getUsers,
-      errors: null,
-    });
+    switch (queryUser?.login_role) {
+      case "judge":
+        const judge = await prisma.judge.findUnique({
+          where: {
+            judge_login_id: queryUser.login_id,
+          },
+        });
+
+        return res.status(200).json({
+          data: {
+            id: queryUser?.login_id,
+            full_name: judge?.judge_full_name,
+            role: queryUser.login_role,
+          },
+          errors: null,
+        });
+      case "citizen":
+        const citizen = await prisma.citizen.findUnique({
+          where: {
+            citizen_login_id: queryUser.login_id,
+          },
+        });
+
+        return res.status(200).json({
+          data: {
+            id: queryUser?.login_id,
+            full_name: citizen?.citizen_full_name,
+            role: queryUser.login_role,
+          },
+          errors: null,
+        });
+
+      case "lawyer":
+        const lawyer = await prisma.lawyer.findUnique({
+          where: {
+            lawyer_login_id: queryUser.login_id,
+          },
+        });
+
+        return res.status(200).json({
+          data: {
+            id: queryUser?.login_id,
+            full_name: lawyer?.lawyer_full_name,
+            role: queryUser.login_role,
+          },
+          errors: null,
+        });
+
+      default:
+        return res.status(200).json({
+          data: null,
+          errors: [
+            {
+              message: "invalid role",
+            },
+          ],
+        });
+    }
   } catch (error: any) {
     return res.status(500).json({
       data: null,
