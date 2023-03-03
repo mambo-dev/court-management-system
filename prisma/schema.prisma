@@ -108,8 +108,6 @@ model Case {
   case_status       Status
   case_hearing_date DateTime
   case_evidence     String[]
-  case_plaintiff    String
-  case_defendant    String
   case_lawyer       Lawyer      @relation(fields: [case_lawyer_id], onDelete: Cascade, references: [lawyer_id])
   case_lawyer_id    Int
   case_judge        Judge       @relation(fields: [case_judge_id], onDelete: Cascade, references: [judge_id])

@@ -1,3 +1,4 @@
+import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Error } from "../../types/types";
@@ -8,6 +9,7 @@ import Button from "../utils/button";
 import Fileupload from "../utils/file-upload";
 import TextInput from "../utils/input";
 import Radio from "../utils/radio";
+import SearchUser from "../utils/search-box";
 
 type Props = {
   token: string;
@@ -18,6 +20,29 @@ export default function NewCase({ token }: Props) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Error[]>([]);
+  const [plaintiff, setPlaintiff] = useState<any>({
+    full_name: "select plaintiff",
+  });
+  const [defendant, setDefendant] = useState<any>({
+    full_name: "select defendant",
+  });
+  const [judge, setJudge] = useState<any>({
+    full_name: "select judge",
+  });
+  const [lawyer, setLawyer] = useState<any>({
+    full_name: "select lawyer",
+  });
+  const [openPlaintMenu, setOpenPlaintMenu] = useState(false);
+  const [openDefMenu, setOpenDefMenu] = useState(false);
+  const [openJudMenu, setOpenJudMenu] = useState(false);
+  const [openLawMenu, setOpenLawMenu] = useState(false);
+
+  const [values, setValues] = useState<any>({
+    case_name: "",
+    case_desc: "",
+    case_hearing_date: "",
+    case_status: "open",
+  });
 
   const handleUploadToServer = async (
     e: React.MouseEvent<HTMLButtonElement>
@@ -72,69 +97,16 @@ export default function NewCase({ token }: Props) {
     }
   };
 
-  const submitCase = async (values: any) => {
-    setLoading(true);
-    setErrors([]);
-    //@ts-ignore
-    if (files?.length <= 0) {
-      setErrors([
-        {
-          message: "no file chosen",
-        },
-      ]);
-      return;
-    }
-    try {
-      let formData = new FormData();
-      Object.keys(values).forEach((value) => {
-        console.log(value, values[value]);
-        formData.append(value, values[value]);
-      });
-
-      files?.forEach((file) => {
-        formData.append("media", file);
-      });
-
-      const data = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/cases/new-case`,
-
-        {
-          formData,
-        },
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (data) {
-        setSuccess(true);
-        setErrors([]);
-      }
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-      setErrors([
-        {
-          message: "we are sorry unexpected error occured",
-        },
-      ]);
-    }
-  };
-  const initialState = {
-    case_name: "",
-    case_desc: "",
-    case_hearing_date: "",
-    case_status: "open",
-  };
-  const { handleChange, handleSubmit, values } = useForm(
-    initialState,
-    submitCase
-  );
-
-  useEffect(() => {}, []);
+  function handleChange(
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  }
 
   return (
     <form
@@ -158,6 +130,97 @@ export default function NewCase({ token }: Props) {
           type="date"
           value={values.case_hearing_date}
         />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+        <div className="relative">
+          <label className="ml-auto text-sm text-slate-900 font-bold">
+            {" "}
+            plaintiff{" "}
+          </label>
+          <button
+            className="w-full bg-gray relative  inline-flex items-center justify-between  border py-2 px-2 font-medium text-slate-800 border-slate-300 rounded outline-none"
+            type="button"
+            onClick={() => setOpenPlaintMenu(!openPlaintMenu)}
+          >
+            {plaintiff?.full_name}
+            <ChevronUpDownIcon className="w-5 h-5" />
+          </button>
+          {openPlaintMenu && (
+            <SearchUser
+              token={token}
+              selectedUser={plaintiff}
+              setSelectedUser={setPlaintiff}
+              setOpenMenu={setOpenPlaintMenu}
+            />
+          )}
+        </div>
+        <div className="relative">
+          <label className="ml-auto text-sm text-slate-900 font-bold">
+            {" "}
+            defendant{" "}
+          </label>
+          <button
+            className="w-full bg-gray relative  inline-flex items-center justify-between  border py-2 px-2 font-medium text-slate-800 border-slate-300 rounded outline-none"
+            type="button"
+            onClick={() => setOpenDefMenu(!openDefMenu)}
+          >
+            {defendant?.full_name}
+            <ChevronUpDownIcon className="w-5 h-5" />
+          </button>
+          {openDefMenu && (
+            <SearchUser
+              token={token}
+              selectedUser={defendant}
+              setSelectedUser={setDefendant}
+              setOpenMenu={setOpenDefMenu}
+            />
+          )}
+        </div>
+        <div className="relative">
+          <label className="ml-auto text-sm text-slate-900 font-bold">
+            {" "}
+            lawyer{" "}
+          </label>
+          <button
+            className="w-full bg-gray relative  inline-flex items-center justify-between  border py-2 px-2 font-medium text-slate-800 border-slate-300 rounded outline-none"
+            type="button"
+            onClick={() => setOpenLawMenu(!openDefMenu)}
+          >
+            {lawyer?.full_name}
+            <ChevronUpDownIcon className="w-5 h-5" />
+          </button>
+          {openLawMenu && (
+            <SearchUser
+              token={token}
+              selectedUser={lawyer}
+              setSelectedUser={setLawyer}
+              setOpenMenu={setOpenLawMenu}
+            />
+          )}
+        </div>
+        <div className="relative">
+          <label className="ml-auto text-sm text-slate-900 font-bold">
+            {" "}
+            judge{" "}
+          </label>
+          <button
+            className="w-full bg-gray relative  inline-flex items-center justify-between  border py-2 px-2 font-medium text-slate-800 border-slate-300 rounded outline-none"
+            type="button"
+            onClick={() => setOpenJudMenu(!openDefMenu)}
+          >
+            {judge?.full_name}
+            <ChevronUpDownIcon className="w-5 h-5" />
+          </button>
+          {openJudMenu && (
+            <SearchUser
+              token={token}
+              selectedUser={judge}
+              setSelectedUser={setJudge}
+              setOpenMenu={setOpenJudMenu}
+            />
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

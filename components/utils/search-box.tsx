@@ -4,27 +4,22 @@ import useDebounce from "../hooks/debounce";
 import TextInput from "./input";
 
 type Props = {
-  handleChange: any;
-  value: any;
-  name: string;
-  placeholder: string;
-  label: string;
-  setUser: any;
   token: string;
+  selectedUser: any;
+  setSelectedUser: any;
+  setOpenMenu: any;
 };
 
 export default function SearchUser({
-  handleChange,
-  name,
-  placeholder,
-  label,
-  value,
-  setUser,
   token,
+  selectedUser,
+  setSelectedUser,
+  setOpenMenu,
 }: Props) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
+
   const debouncedSearch = useDebounce(query, 500);
   useEffect(() => {
     if (debouncedSearch) {
@@ -50,39 +45,39 @@ export default function SearchUser({
     }
   }, [debouncedSearch, query, token]);
   return (
-    <div className="relative  w-full">
-      <div className="w-full">
-        <TextInput
-          handleChange={(e) => setQuery(e.target.value)}
-          name={name}
-          label={label}
-          type="text"
-          value={value}
+    <div className="absolute  z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+      <div className="w-full px-2">
+        <input
+          className="border-b-2 py-2 px-2 border-gray-700 focus:border-green-700 outline-none w-full placeholder:font-medium "
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="search username"
         />
       </div>
-      {loading ? (
-        <div className="w-full absolute z-10 bg-white rounded py-2 flex items-center justify-center text-sm text-slate-600">
-          <span>loading...</span>
-        </div>
-      ) : (
-        <div className="w-full absolute z-10 bg-white rounded py-2 ">
-          {query.length > 0 &&
-            users?.map((user: any) => {
+      {query.length > 0 &&
+        (loading ? (
+          <ul className="px-4 mt-3 w-full text-gray-800 font-medium flex items-center justify-center">
+            loading...
+          </ul>
+        ) : (
+          <ul className="w-full mt-3 ">
+            {users?.map((user: any) => {
               return (
                 <button
-                  key={user.id}
                   onClick={() => {
-                    setUser(user.id);
-                    setQuery("");
+                    setSelectedUser(user);
+                    setOpenMenu(false);
                   }}
-                  className="w-ful flex items-center justify-between px-2 py-2"
+                  className="outline-none px-4 w-full inline-flex items-center justify-center gap-x-4 py-2 hover:bg-cyan-100 hover:text-cyan-900 font-medium"
+                  key={user.id}
                 >
-                  {user.full_name} {user.role}
+                  {user.full_name}{" "}
+                  <span className="text-green-600">{user.role}</span>
                 </button>
               );
             })}
-        </div>
-      )}
+          </ul>
+        ))}
     </div>
   );
 }

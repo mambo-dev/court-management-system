@@ -91,7 +91,7 @@ export default async function handler(
         case_defendant: "",
         case_description: String(case_desc),
         case_hearing_date: String(case_hearing_date),
-        case_name: String(case_hearing_date),
+        case_name: String(case_name),
         case_plaintiff: "",
 
         case_judge: {
@@ -104,8 +104,27 @@ export default async function handler(
             lawyer_login_id: Number(case_lawyer_id),
           },
         },
+
+        defendant: {
+          create: {
+            defendant_citizen: {
+              connect: {
+                citizen_login_id: Number(case_defend_id),
+              },
+            },
+          },
+        },
+        plaintiff: {
+          create: {
+            plaintiff_citizen: {
+              connect: {
+                citizen_login_id: Number(case_defend_id),
+              },
+            },
+          },
+        },
         //@ts-ignore
-        case_status: `${String(case_status)}`,
+        case_status: `${case_status}`,
       },
     });
 

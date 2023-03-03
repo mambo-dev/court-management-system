@@ -1,7 +1,9 @@
+import Image from "next/image";
 import React, { useState } from "react";
 import { Error } from "../../types/types";
 import ErrorMessage from "../extras/error";
 import Success from "../extras/success";
+import { AiFillFileWord, AiFillFileExcel, AiFillFilePdf } from "react-icons/ai";
 
 type Props = {
   files: File[] | null;
@@ -97,12 +99,45 @@ export default function Fileupload({ files, setFiles }: Props) {
           <p className="text-xs text-gray-500">pdf, word, excel up to 20MB</p>
         </div>
       </div>
-      <div className="w-full grid grid-cols-4 text-green-800 font-medium">
-        {files?.map((file, index) => (
-          <p key={index}> {file.name} </p>
-        ))}
+      <div className="w-full grid grid-cols-5 gap-x-2 text-green-800 font-medium text-xs">
+        {files?.map((file, index) => {
+          let type = !file.type.split("ml.")[1]
+            ? file.type.split("/")[1]
+            : file.type.split("ml.")[1];
+
+          return (
+            <span
+              key={index}
+              className="w-full  flex items-center justify-center mt-2"
+            >
+              {type === "document" && (
+                <span className=" flex items-center justify-center gap-x-2  text-blue-500">
+                  <AiFillFileWord className="w-5 h-5" />
+                  <p className="truncate">{truncate(file.name, 15)} </p>
+                </span>
+              )}
+              {type === "pdf" && (
+                <span className="flex items-center justify-center  gap-x-3   text-red-900 ">
+                  <AiFillFilePdf />
+                  <p className="truncate">{truncate(file.name, 15)} </p>
+                </span>
+              )}
+              {type === "sheet" && (
+                <span className="flex items-center justify-center  gap-x-3  text-green-500">
+                  <AiFillFileExcel className="w-5 h-5" />
+                  <p className="truncate">{truncate(file.name, 15)} </p>
+                </span>
+              )}
+            </span>
+          );
+        })}
       </div>
       <ErrorMessage errors={error} />
     </div>
   );
+}
+
+export function truncate(str: string, maxLength: number) {
+  if (str.length <= maxLength) return str;
+  return str.substring(0, maxLength - 3) + "...";
 }

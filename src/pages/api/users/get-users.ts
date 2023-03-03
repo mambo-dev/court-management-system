@@ -88,23 +88,24 @@ export default async function handler(
 
     const queryUsers = await prisma.login.findMany({
       where: {
-        OR: {
-          Citizen: {
-            citizen_full_name: {
-              search: `${query}`,
-            },
-          },
-          Judge: {
-            judge_full_name: {
-              search: `${query}`,
-            },
-          },
-          Lawyer: {
-            lawyer_full_name: {
-              search: `${query}`,
-            },
-          },
+        login_username: {
+          search: `${query}`,
         },
+        // Citizen: {
+        //   citizen_full_name: {
+        //     search: `${query}`,
+        //   },
+        // },
+        // Judge: {
+        //   judge_full_name: {
+        //     search: `${query}`,
+        //   },
+        // },
+        // Lawyer: {
+        //   lawyer_full_name: {
+        //     search: `${query}`,
+        //   },
+        // },
       },
       select: {
         Judge: true,
@@ -113,6 +114,7 @@ export default async function handler(
         login_password: false,
         login_role: true,
         login_id: true,
+        Admin: true,
       },
     });
 
@@ -122,11 +124,12 @@ export default async function handler(
         full_name:
           user.Citizen?.citizen_full_name ||
           user.Judge?.judge_full_name ||
-          user.Lawyer?.lawyer_full_name,
+          user.Lawyer?.lawyer_full_name ||
+          user.Admin?.admin_full_name,
         role: user.login_role,
       };
     });
-
+    console.log(returnUsers, query);
     return res.status(200).json({
       data: returnUsers,
       errors: null,
