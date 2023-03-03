@@ -41,7 +41,7 @@ model Judge {
   judge_national_id  String
   judge_login        Login  @relation(fields: [judge_login_id], onDelete: Cascade, references: [login_id])
   judge_login_id     Int    @unique
-  Case               Case?
+  Case               Case[]
 }
 
 model Citizen {
@@ -111,7 +111,7 @@ model Case {
   case_lawyer       Lawyer      @relation(fields: [case_lawyer_id], onDelete: Cascade, references: [lawyer_id])
   case_lawyer_id    Int
   case_judge        Judge       @relation(fields: [case_judge_id], onDelete: Cascade, references: [judge_id])
-  case_judge_id     Int         @unique
+  case_judge_id     Int
   Hearing           Hearing[]
   plaintiff         plaintiff[]
   defendant         defendant[]

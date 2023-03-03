@@ -1,5 +1,5 @@
 //Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Login } from "@prisma/client";
+import { Case, Login } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 import { DecodedToken, Error } from "../../../../types/types";
@@ -9,7 +9,7 @@ import { handleAuthorization } from "../../../../utils/authorization";
 import jwtDecode from "jwt-decode";
 import { parseForm } from "../../../../lib/parse-form";
 type Response = {
-  data: Login | null;
+  data: Case | null;
   errors: Error[] | null;
 };
 
@@ -86,14 +86,12 @@ export default async function handler(
       case_lawyer_id,
       case_judge_id,
     } = fields;
-    const newCase = prisma.case.create({
-      data: {
-        case_defendant: "",
-        case_description: String(case_desc),
-        case_hearing_date: String(case_hearing_date),
-        case_name: String(case_name),
-        case_plaintiff: "",
 
+    const newCase = await prisma.case.create({
+      data: {
+        case_description: String(case_desc),
+        case_hearing_date: new Date(String(case_hearing_date)),
+        case_name: String(case_name),
         case_judge: {
           connect: {
             judge_login_id: Number(case_judge_id),
@@ -118,18 +116,19 @@ export default async function handler(
           create: {
             plaintiff_citizen: {
               connect: {
-                citizen_login_id: Number(case_defend_id),
+                citizen_login_id: Number(case_plaint_id),
               },
             },
           },
         },
+        case_evidence: Array.isArray(url) ? [...url] : [url],
         //@ts-ignore
         case_status: `${case_status}`,
       },
     });
 
     return res.status(200).json({
-      data: null,
+      data: newCase,
       errors: null,
     });
   } catch (error: any) {

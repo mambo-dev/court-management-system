@@ -66,11 +66,16 @@ export default function NewCase({ token }: Props) {
         formData.append(value, values[value]);
       });
 
+      formData.append("case_judge_id", judge.id);
+      formData.append("case_lawyer_id", lawyer.id);
+      formData.append("case_plaint_id", plaintiff.id);
+      formData.append("case_defend_id", defendant.id);
+
       files?.forEach((file) => {
         formData.append("media", file);
       });
-      console.log(formData);
-      const data = await axios.post(
+
+      const res = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/api/cases/new-case`,
 
         formData,
@@ -82,10 +87,26 @@ export default function NewCase({ token }: Props) {
         }
       );
 
-      if (data) {
-        setSuccess(true);
-        setErrors([]);
+      const {
+        data,
+        error,
+      }: {
+        data: {
+          url: string | string[];
+        } | null;
+        error: string | null;
+      } = await res.data;
+
+      if (error || !data) {
+        setErrors([
+          {
+            message: error || "Sorry! something went wrong.",
+          },
+        ]);
+        return;
       }
+      setSuccess(true);
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
