@@ -19,6 +19,59 @@ export default function NewCase({ token }: Props) {
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Error[]>([]);
 
+  const handleUploadToServer = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrors([]);
+    //@ts-ignore
+    if (files?.length <= 0) {
+      setErrors([
+        {
+          message: "no file chosen",
+        },
+      ]);
+      return;
+    }
+    try {
+      let formData = new FormData();
+      Object.keys(values).forEach((value) => {
+        console.log(value, values[value]);
+        formData.append(value, values[value]);
+      });
+
+      files?.forEach((file) => {
+        formData.append("media", file);
+      });
+      console.log(formData);
+      const data = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL}/api/cases/new-case`,
+
+        formData,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (data) {
+        setSuccess(true);
+        setErrors([]);
+      }
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      setErrors([
+        {
+          message: "we are sorry unexpected error occured",
+        },
+      ]);
+    }
+  };
+
   const submitCase = async (values: any) => {
     setLoading(true);
     setErrors([]);
@@ -33,15 +86,14 @@ export default function NewCase({ token }: Props) {
     }
     try {
       let formData = new FormData();
-      Object.keys(values).map((value) => {
+      Object.keys(values).forEach((value) => {
+        console.log(value, values[value]);
         formData.append(value, values[value]);
       });
 
-      files?.map((file) => {
+      files?.forEach((file) => {
         formData.append("media", file);
       });
-
-      console.log(formData);
 
       const data = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/api/cases/new-case`,
@@ -85,7 +137,10 @@ export default function NewCase({ token }: Props) {
   useEffect(() => {}, []);
 
   return (
-    <form onSubmit={handleSubmit} className="w-full flex flex-col gap-y-5">
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      className="w-full flex flex-col gap-y-5"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <TextInput
           handleChange={handleChange}
@@ -141,7 +196,12 @@ export default function NewCase({ token }: Props) {
       <Fileupload files={files} setFiles={setFiles} />
       <div className="flex item-center justify-end">
         <div className="w-36">
-          <Button type="submit" text="save" loading={loading} />
+          <Button
+            type="button"
+            text="save"
+            loading={loading}
+            onClick={handleUploadToServer}
+          />
         </div>
       </div>
       <Success message="succesfully created case" success={success} />

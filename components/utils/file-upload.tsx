@@ -49,7 +49,7 @@ export default function Fileupload({ files, setFiles }: Props) {
 
       return;
     }
-    console.log(validFiles);
+
     setFiles(validFiles);
     setError([]);
     //reset file input

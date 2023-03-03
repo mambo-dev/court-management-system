@@ -55,7 +55,8 @@ model Citizen {
   citizen_national_id  String
   citizen_login        Login         @relation(fields: [citizen_login_id], onDelete: Cascade, references: [login_id])
   citizen_login_id     Int           @unique
-  Case                 Case[]
+  plaintiff            plaintiff?
+  defendant            defendant?
 }
 
 enum CitizenStand {
@@ -101,21 +102,37 @@ model Admin {
 }
 
 model Case {
-  case_id           Int       @id @unique @default(autoincrement())
+  case_id           Int         @id @unique @default(autoincrement())
   case_name         String
   case_description  String
   case_status       Status
   case_hearing_date DateTime
   case_evidence     String[]
-  case_citizen      Citizen   @relation(fields: [case_citizen_id], onDelete: Cascade, references: [citizen_id])
-  case_citizen_id   Int
   case_plaintiff    String
   case_defendant    String
-  case_lawyer       Lawyer    @relation(fields: [case_lawyer_id], onDelete: Cascade, references: [lawyer_id])
+  case_lawyer       Lawyer      @relation(fields: [case_lawyer_id], onDelete: Cascade, references: [lawyer_id])
   case_lawyer_id    Int
-  case_judge        Judge     @relation(fields: [case_judge_id], onDelete: Cascade, references: [judge_id])
-  case_judge_id     Int       @unique
+  case_judge        Judge       @relation(fields: [case_judge_id], onDelete: Cascade, references: [judge_id])
+  case_judge_id     Int         @unique
   Hearing           Hearing[]
+  plaintiff         plaintiff[]
+  defendant         defendant[]
+}
+
+model plaintiff {
+  plaintiff_id         Int     @id @unique @default(autoincrement())
+  plaintiff_citizen    Citizen @relation(fields: [plaintiff_citizen_id], onDelete: Cascade, references: [citizen_id])
+  plaintiff_citizen_id Int     @unique
+  plaintiff_case       Case    @relation(fields: [plaitiff_case_id], onDelete: Cascade, references: [case_id])
+  plaitiff_case_id     Int
+}
+
+model defendant {
+  defendant_id         Int     @id @unique @default(autoincrement())
+  defendant_citizen    Citizen @relation(fields: [defendant_citizen_id], onDelete: Cascade, references: [citizen_id])
+  defendant_citizen_id Int     @unique
+  defendant_case       Case    @relation(fields: [defendant_case_id], onDelete: Cascade, references: [case_id])
+  defendant_case_id    Int
 }
 
 model Hearing {
