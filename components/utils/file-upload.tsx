@@ -99,7 +99,7 @@ export default function Fileupload({ files, setFiles }: Props) {
           <p className="text-xs text-gray-500">pdf, word, excel up to 20MB</p>
         </div>
       </div>
-      <div className="w-full grid grid-cols-5 gap-x-2 text-green-800 font-medium text-xs">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-y-2 md:grid-cols-5 gap-x-2 text-green-800 font-medium text-xs">
         {files?.map((file, index) => {
           let type = !file.type.split("ml.")[1]
             ? file.type.split("/")[1]

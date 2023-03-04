@@ -1,5 +1,6 @@
 import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Error } from "../../types/types";
 import ErrorMessage from "../extras/error";
@@ -13,9 +14,10 @@ import SearchUser from "../utils/search-box";
 
 type Props = {
   token: string;
+  setOpenPanel: any;
 };
 
-export default function NewCase({ token }: Props) {
+export default function NewCase({ token, setOpenPanel }: Props) {
   const [files, setFiles] = useState<File[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,7 +38,7 @@ export default function NewCase({ token }: Props) {
   const [openDefMenu, setOpenDefMenu] = useState(false);
   const [openJudMenu, setOpenJudMenu] = useState(false);
   const [openLawMenu, setOpenLawMenu] = useState(false);
-
+  const router = useRouter();
   const [values, setValues] = useState<any>({
     case_name: "",
     case_desc: "",
@@ -106,6 +108,15 @@ export default function NewCase({ token }: Props) {
         return;
       }
       setSuccess(true);
+
+      setTimeout(() => {
+        setSuccess(false);
+        setOpenPanel(false);
+      }, 1000);
+      setTimeout(() => {
+        setOpenPanel(false);
+        router.reload();
+      }, 2000);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -206,7 +217,7 @@ export default function NewCase({ token }: Props) {
           <button
             className="w-full bg-gray relative  inline-flex items-center justify-between  border py-2 px-2 font-medium text-slate-800 border-slate-300 rounded outline-none"
             type="button"
-            onClick={() => setOpenLawMenu(!openDefMenu)}
+            onClick={() => setOpenLawMenu(!openLawMenu)}
           >
             {lawyer?.full_name}
             <ChevronUpDownIcon className="w-5 h-5" />
@@ -228,7 +239,7 @@ export default function NewCase({ token }: Props) {
           <button
             className="w-full bg-gray relative  inline-flex items-center justify-between  border py-2 px-2 font-medium text-slate-800 border-slate-300 rounded outline-none"
             type="button"
-            onClick={() => setOpenJudMenu(!openDefMenu)}
+            onClick={() => setOpenJudMenu(!openJudMenu)}
           >
             {judge?.full_name}
             <ChevronUpDownIcon className="w-5 h-5" />
