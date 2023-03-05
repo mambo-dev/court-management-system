@@ -13,6 +13,7 @@ import {
   Judge,
   Lawyer,
   plaintiff,
+  Role,
 } from "@prisma/client";
 import { format } from "date-fns";
 import jwtDecode from "jwt-decode";
@@ -20,6 +21,7 @@ import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import DelCase from "../../../components/cases/del-case";
 import EditCase from "../../../components/cases/edit-case";
+import ExpandCase from "../../../components/cases/expand-case";
 import NewCase from "../../../components/cases/new-case";
 import Table from "../../../components/extras/table";
 import DashboardLayout from "../../../components/layout/dashboard";
@@ -33,11 +35,32 @@ import { DecodedToken } from "../../../types/types";
 type Props = {
   data: Data;
 };
+export type SingleCase = CaseType & {
+  plaintiff: (plaintiff & {
+    plaintiff_citizen: Citizen & {
+      citizen_login: {
+        login_role: Role;
+        login_id: number;
+      };
+    };
+  })[];
+  defendant: (defendant & {
+    defendant_citizen: Citizen & {
+      citizen_login: {
+        login_role: Role;
+        login_id: number;
+      };
+    };
+  })[];
+  case_lawyer: Lawyer;
+  case_judge: Judge;
+};
 
 export default function Case({ data }: Props) {
   const [openPanel, setOpenPanel] = useState(false);
   const [openEditPanel, setOpenEditPanel] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedCase, setSelectedCase] = useState<any | null>(null);
   const { user, token, cases } = data;
   const canEdit = user?.login_role === "admin" || user?.login_role === "judge";
@@ -125,7 +148,10 @@ export default function Case({ data }: Props) {
               <td className="py-4  pr-2">
                 <Button
                   expand
-                  onClick={() => {}}
+                  onClick={() => {
+                    setOpenDetailsModal(true);
+                    setSelectedCase(cases);
+                  }}
                   type="button"
                   icon={
                     <EllipsisVerticalIcon className="w-5 h-5 font-medium  " />
@@ -171,14 +197,24 @@ export default function Case({ data }: Props) {
         span
         span_range="max-w-5xl"
       >
-        <EditCase />
+        <EditCase
+          selectedCase={selectedCase}
+          setOpenPanel={setOpenEditPanel}
+          token={token}
+        />
       </SidePanel>
-      <Modal
-        isOpen={openDeleteModal}
-        setIsOpen={setOpenDeleteModal}
-        title="delete case"
-      >
-        <DelCase />
+      <Modal isOpen={openDeleteModal} setIsOpen={setOpenDeleteModal}>
+        <DelCase
+          selectedCase={selectedCase}
+          setIsOpen={setOpenDeleteModal}
+          token={token}
+        />
+      </Modal>
+      <Modal isOpen={openDetailsModal} setIsOpen={setOpenDetailsModal} span>
+        <ExpandCase
+          selectedCase={selectedCase}
+          setOpenDetailsModal={setOpenDetailsModal}
+        />
       </Modal>
     </div>
   );
@@ -189,10 +225,20 @@ type Data = {
   token: string;
   cases: (CaseType & {
     plaintiff: (plaintiff & {
-      plaintiff_citizen: Citizen;
+      plaintiff_citizen: Citizen & {
+        citizen_login: {
+          login_role: Role;
+          login_id: number;
+        };
+      };
     })[];
     defendant: (defendant & {
-      defendant_citizen: Citizen;
+      defendant_citizen: Citizen & {
+        citizen_login: {
+          login_role: Role;
+          login_id: number;
+        };
+      };
     })[];
     case_lawyer: Lawyer;
     case_judge: Judge;
@@ -243,12 +289,32 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
       case_judge: true,
       defendant: {
         include: {
-          defendant_citizen: true,
+          defendant_citizen: {
+            include: {
+              citizen_login: {
+                select: {
+                  login_password: false,
+                  login_role: true,
+                  login_id: true,
+                },
+              },
+            },
+          },
         },
       },
       plaintiff: {
         include: {
-          plaintiff_citizen: true,
+          plaintiff_citizen: {
+            include: {
+              citizen_login: {
+                select: {
+                  login_password: false,
+                  login_role: true,
+                  login_id: true,
+                },
+              },
+            },
+          },
         },
       },
     },

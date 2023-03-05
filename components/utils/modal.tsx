@@ -4,7 +4,7 @@ import { Fragment, useState } from "react";
 type ModalProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  title: string;
+  title?: string;
   children: any;
   span?: boolean;
 };
@@ -52,8 +52,8 @@ export default function Modal({
             >
               <Dialog.Panel
                 className={`w-full"" ${
-                  span ? "max-w-2xl" : "max-w-md"
-                } max-w-md relative transform overflow-hidden rounded bg-white p-6 text-left align-middle shadow-xl transition-all`}
+                  span ? "max-w-5xl" : "max-w-md"
+                }  relative transform overflow-hidden rounded bg-white  text-left align-middle shadow-xl transition-all`}
               >
                 <Dialog.Title
                   as="h3"
