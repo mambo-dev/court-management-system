@@ -1,3 +1,4 @@
+import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import React, {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
@@ -17,6 +18,7 @@ type Props = {
   loading?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   expand?: boolean;
+  exportBtn?: boolean;
 };
 
 export default function Button({
@@ -30,7 +32,25 @@ export default function Button({
   onClick,
   edit,
   expand,
+  exportBtn,
 }: Props) {
+  if (exportBtn) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="  py-2 px-3 rounded-md shadow font-bold bg-green-300 text-green-900 inline-flex outline-none items-center justify-center gap-x-2 hover:ring-1 focus:ring-2  ring-green-400 ring-opacity-50 focus:border focus:border-green-500 ring-offset-1  "
+      >
+        {loading ? (
+          <Loading borderColor="border-green-900" />
+        ) : (
+          <DocumentArrowDownIcon className="w-5 h-5 font-bold" />
+        )}
+        {loading ? "exporting..." : "export"}
+      </button>
+    );
+  }
+
   if (error) {
     return (
       <button

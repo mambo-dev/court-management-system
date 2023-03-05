@@ -45,7 +45,7 @@ export default function SearchUser({
     }
   }, [debouncedSearch, query, token]);
   return (
-    <div className="absolute  z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+    <div className="absolute top-full  z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
       <div className="w-full px-2">
         <input
           className="border-b-2 py-2 px-2 border-gray-700 focus:border-green-700 outline-none w-full placeholder:font-medium "

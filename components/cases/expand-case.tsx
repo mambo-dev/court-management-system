@@ -1,3 +1,4 @@
+import { ArrowPathRoundedSquareIcon } from "@heroicons/react/20/solid";
 import {
   PaperClipIcon,
   UserIcon,
@@ -18,7 +19,7 @@ export default function ExpandCase({
   setOpenDetailsModal,
 }: Props) {
   return (
-    <div className="overflow-auto w-full ">
+    <div className="overflow-auto w-[700px] ">
       <div className="flex items-center justify-between ">
         <div className="px-4 py-5 sm:px-6">
           <h3 className="text-base font-semibold leading-6 text-gray-900">
@@ -201,24 +202,24 @@ export default function ExpandCase({
                 role="list"
                 className="divide-y divide-gray-200 rounded-md border border-gray-200"
               >
-                {selectedCase?.plaintiff.map((plaint) => {
+                {selectedCase?.Hearing.map((hearing) => {
                   return (
                     <li
-                      key={plaint.plaintiff_id}
+                      key={hearing.hearing_id}
                       className="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                     >
                       <div className="flex w-0 flex-1 items-center">
-                        <UserIcon
+                        <ArrowPathRoundedSquareIcon
                           className="h-5 w-5 flex-shrink-0 text-gray-400"
                           aria-hidden="true"
                         />
                         <span className="ml-2 w-0 flex-1 truncate first-letter:uppercase">
-                          {plaint.plaintiff_citizen.citizen_full_name}
+                          {hearing.hearing_outcome}
                         </span>
                       </div>
                       <div className="ml-4 flex-shrink-0">
                         <p className="font-medium text-green-600 hover:text-green-500">
-                          citizen
+                          {hearing.hearing_status}
                         </p>
                       </div>
                     </li>

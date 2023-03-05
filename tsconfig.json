@@ -17,8 +17,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "noErrorTruncation": true
   },
+  
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "ts-node": {

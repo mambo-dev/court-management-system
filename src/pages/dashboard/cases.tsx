@@ -10,6 +10,7 @@ import {
   Case as CaseType,
   Citizen,
   defendant,
+  Hearing,
   Judge,
   Lawyer,
   plaintiff,
@@ -44,6 +45,7 @@ export type SingleCase = CaseType & {
       };
     };
   })[];
+  Hearing: Hearing[];
   defendant: (defendant & {
     defendant_citizen: Citizen & {
       citizen_login: {
@@ -232,6 +234,7 @@ type Data = {
         };
       };
     })[];
+    Hearing: Hearing[];
     defendant: (defendant & {
       defendant_citizen: Citizen & {
         citizen_login: {
@@ -317,6 +320,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
           },
         },
       },
+      Hearing: true,
     },
   });
 

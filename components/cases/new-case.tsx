@@ -10,7 +10,7 @@ import Button from "../utils/button";
 import Fileupload from "../utils/file-upload";
 import TextInput from "../utils/input";
 import Radio from "../utils/radio";
-import SearchUser from "../utils/search-box";
+import SearchUser from "../utils/search-user";
 
 type Props = {
   token: string;
