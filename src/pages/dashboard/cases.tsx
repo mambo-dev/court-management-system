@@ -145,7 +145,7 @@ export default function Case({ data }: Props) {
               >
                 {cases.case_status}
               </td>
-              <td className="py-4  pr-2">
+              <td id="details" className="py-4  pr-2 ">
                 <Button
                   expand
                   onClick={() => {

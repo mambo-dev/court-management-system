@@ -145,7 +145,6 @@ model Hearing {
 
 enum HearingStatus {
   final
-  pending
   continuing
 }
 
