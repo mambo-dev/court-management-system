@@ -19,6 +19,7 @@ type Props = {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   expand?: boolean;
   exportBtn?: boolean;
+  disabled?: boolean;
 };
 
 export default function Button({
@@ -33,12 +34,14 @@ export default function Button({
   edit,
   expand,
   exportBtn,
+  disabled,
 }: Props) {
   if (exportBtn) {
     return (
       <button
         type="button"
         onClick={onClick}
+        disabled={disabled}
         className="  py-2 px-3 rounded-md shadow font-bold bg-green-300 text-green-900 inline-flex outline-none items-center justify-center gap-x-2 hover:ring-1 focus:ring-2  ring-green-400 ring-opacity-50 focus:border focus:border-green-500 ring-offset-1  "
       >
         {loading ? (

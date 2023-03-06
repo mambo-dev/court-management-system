@@ -183,7 +183,7 @@ export default function Cases({ token, user }: Props) {
                     Dbdata: cases,
                     filename: `${user?.login_username}-${
                       user?.login_role
-                    }${(id += 1)}-projects`,
+                    }${(id += 1)}-cases`,
                     filetype:
                       "application/vnd.openxmlfromats-officedocument.spreadsheetml.sheet;charset=UTF-8",
                     fileExtension: ".xlsx",

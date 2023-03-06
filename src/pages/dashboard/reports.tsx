@@ -39,7 +39,7 @@ export default function Reports({ data }: Props) {
         {pages === "cases" ? (
           <Cases token={token} user={user} />
         ) : (
-          <Users token={token} />
+          <Users token={token} user={user} />
         )}
       </div>
     </div>

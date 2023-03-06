@@ -194,13 +194,6 @@ export default async function handler(
           ],
         });
       }
-      console.log(new Date(case_from));
-
-      const trial = await prisma.case.findUnique({
-        where: {
-          case_id: 2,
-        },
-      });
 
       const cases = await prisma.case.findMany({
         where: {
