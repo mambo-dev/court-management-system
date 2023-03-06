@@ -1,24 +1,31 @@
-import formidable from "formidable";
+import formidable, {
+  Fields,
+  Files,
+  errors as FormidableErrors,
+} from "formidable";
 import type { NextApiRequest } from "next";
 import { join } from "path";
 import { format } from "date-fns";
-import { mkdir, stat } from "fs/promises";
 import mime from "mime";
-export const FormidableError = formidable.errors.FormidableError;
 
-export const parseForm = async (
+export const FormidableError = FormidableErrors.FormidableError;
+
+export const parseForm = (
   req: NextApiRequest
-): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
+): Promise<{ fields: Fields; files: Files }> => {
   return new Promise(async (resolve, reject) => {
     const uploadDir = join(
       process.env.ROOT_DIR || process.cwd(),
       `/uploads/${format(Date.now(), "dd-MM-Y")}`
     );
+    const { mkdir, stat } = require("fs");
     try {
-      await stat(uploadDir);
+      await new Promise((resolve) => stat(uploadDir, resolve));
     } catch (e: any) {
       if (e.code === "ENOENT") {
-        await mkdir(uploadDir, { recursive: true });
+        await new Promise((resolve) =>
+          mkdir(uploadDir, { recursive: true }, resolve)
+        );
       } else {
         console.error(e);
         reject(e);

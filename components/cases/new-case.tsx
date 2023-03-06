@@ -76,12 +76,12 @@ export default function NewCase({ token, setOpenPanel }: Props) {
       files?.forEach((file) => {
         formData.append("media", file);
       });
+      console.log(formData);
 
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/api/cases/new-case`,
 
         formData,
-
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -91,20 +91,17 @@ export default function NewCase({ token, setOpenPanel }: Props) {
 
       const {
         data,
-        error,
+        errors: serverErrors,
       }: {
         data: {
           url: string | string[];
         } | null;
-        error: string | null;
+        errors: Error[] | [];
       } = await res.data;
 
-      if (error || !data) {
-        setErrors([
-          {
-            message: error || "Sorry! something went wrong.",
-          },
-        ]);
+      if (serverErrors || !data) {
+        setLoading(false);
+        setErrors([...serverErrors]);
         return;
       }
       setSuccess(true);
@@ -118,14 +115,20 @@ export default function NewCase({ token, setOpenPanel }: Props) {
         router.reload();
       }, 2000);
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setLoading(false);
-      setErrors([
-        {
-          message: "we are sorry unexpected error occured",
-        },
-      ]);
+      error.response?.data.errors && error.response.data.errors.length > 0
+        ? setErrors([...error.response.data.errors])
+        : setErrors([
+            {
+              message: "something unexpected happened try again later",
+            },
+          ]);
+      setLoading(false);
+      setTimeout(() => {
+        setErrors([]);
+      }, 2000);
     }
   };
 
