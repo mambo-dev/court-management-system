@@ -8,6 +8,7 @@ import { IoDocumentsOutline } from "react-icons/io5";
 import DataDisp from "../../../components/utils/data-disp";
 import { subMonths, format } from "date-fns";
 import GraphDisplay from "../../../components/dashboard/graph-display";
+import Feedback from "../../../components/dashboard/feedback";
 
 const today = new Date();
 const lastMonth = subMonths(today, 1);
@@ -54,14 +55,14 @@ export default function Home({ data }: Props) {
           totals={caseStatus.totalClosedCases}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <GraphDisplay
           totalCases={cases.length}
           totalClosedCases={caseStatus.totalClosedCases}
           totalOpenCases={caseStatus.totalOpenCases}
         />
+        <Feedback user={loggedInUser} token={token} />
       </div>
-      <div></div>
     </div>
   );
 }
@@ -114,6 +115,8 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
       select: {
         login_username: true,
         login_role: true,
+        login_id: true,
+        login_password: false,
       },
     }),
     prisma.login.aggregate({
