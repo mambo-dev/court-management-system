@@ -6,32 +6,33 @@ async function main() {
     hashLength: 10,
   });
   //create admin user always
-  const checkAdminExists = await prisma.login.findUnique({
+  const adminExists = await prisma.login.findUnique({
     where: {
       login_username: "",
     },
   });
-  if (checkAdminExists) {
+  console.log(adminExists);
+  if (!adminExists) {
     return;
-  }
-
-  await prisma.login.create({
-    data: {
-      login_password: hash,
-      login_role: "admin",
-      login_username: "zab",
-      Admin: {
-        create: {
-          admin_email: "zab@email.com",
-          admin_dob: "2/22/2023",
-          admin_full_name: "zabbron maina",
-          admin_gender: "male",
-          admin_national_id: "37459290",
-          admin_phone_number: "074939239",
+  } else {
+    await prisma.login.create({
+      data: {
+        login_password: hash,
+        login_role: "admin",
+        login_username: "zab",
+        Admin: {
+          create: {
+            admin_email: "zab@email.com",
+            admin_dob: "2/22/2023",
+            admin_full_name: "zabbron maina",
+            admin_gender: "male",
+            admin_national_id: "37459290",
+            admin_phone_number: "074939239",
+          },
         },
       },
-    },
-  });
+    });
+  }
 }
 main()
   .then(async () => {
