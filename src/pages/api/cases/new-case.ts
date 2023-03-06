@@ -63,8 +63,8 @@ export default async function handler(
         ],
       });
     }
-    const { fields, files } = await parseForm(req);
-    const noEmptyValues = handleBodyNotEmpty(fields);
+    //const { fields, files } = await parseForm(req);
+    const noEmptyValues = handleBodyNotEmpty(req.body);
 
     if (noEmptyValues.length > 0) {
       return res.status(200).json({
@@ -73,9 +73,9 @@ export default async function handler(
       });
     }
 
-    const file = files.media;
-    let url = Array.isArray(file) ? file.map((f) => f.filepath) : file.filepath;
-    console.log(url);
+    // const file = files.media;
+    // let url = Array.isArray(file) ? file.map((f) => f.filepath) : file.filepath;
+    // console.log(url);
     const {
       case_name,
       case_desc,
@@ -85,7 +85,7 @@ export default async function handler(
       case_defend_id,
       case_lawyer_id,
       case_judge_id,
-    } = fields;
+    } = req.query;
 
     const newCase = await prisma.case.create({
       data: {
@@ -121,7 +121,7 @@ export default async function handler(
             },
           },
         },
-        case_evidence: Array.isArray(url) ? [...url] : [url],
+        case_evidence: ["", ""],
         //@ts-ignore
         case_status: `${case_status}`,
       },
@@ -132,6 +132,7 @@ export default async function handler(
       errors: null,
     });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({
       data: null,
       errors: [{ message: error.message }],

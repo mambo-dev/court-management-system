@@ -6,6 +6,15 @@ async function main() {
     hashLength: 10,
   });
   //create admin user always
+  const checkAdminExists = await prisma.login.findUnique({
+    where: {
+      login_username: "",
+    },
+  });
+  if (checkAdminExists) {
+    return;
+  }
+
   await prisma.login.create({
     data: {
       login_password: hash,
