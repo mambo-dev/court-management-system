@@ -27,7 +27,7 @@ export default function Home({ data }: Props) {
   } = data;
   console.log(cases);
   return (
-    <div className="w-full h-full flex flex-col px-2 py-4">
+    <div className="w-full h-full flex flex-col px-2 py-4 gap-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
         <DataDisp
           percentage={casesPercentageIncrease}
@@ -54,8 +54,12 @@ export default function Home({ data }: Props) {
           totals={caseStatus.totalClosedCases}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        <GraphDisplay cases={cases} />
+      <div className="grid grid-cols-1 md:grid-cols-3">
+        <GraphDisplay
+          totalCases={cases.length}
+          totalClosedCases={caseStatus.totalClosedCases}
+          totalOpenCases={caseStatus.totalOpenCases}
+        />
       </div>
       <div></div>
     </div>

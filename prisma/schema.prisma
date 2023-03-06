@@ -12,8 +12,8 @@ datasource db {
 }
 
 model Login {
-  login_id       Int      @id @unique @default(autoincrement())
-  login_username String   @unique
+  login_id       Int        @id @unique @default(autoincrement())
+  login_username String     @unique
   login_password String
   login_role     Role
   Judge          Judge?
@@ -21,6 +21,7 @@ model Login {
   Police         Police?
   Lawyer         Lawyer?
   Admin          Admin?
+  FeedBack       FeedBack[]
 }
 
 enum Role {
@@ -55,8 +56,24 @@ model Citizen {
   citizen_national_id  String
   citizen_login        Login         @relation(fields: [citizen_login_id], onDelete: Cascade, references: [login_id])
   citizen_login_id     Int           @unique
-  plaintiff            plaintiff?
-  defendant            defendant?
+  plaintiff            plaintiff[]
+  defendant            defendant[]
+}
+
+model FeedBack {
+  feedback_id           Int          @id @unique @default(autoincrement())
+  feedback_login        Login        @relation(fields: [feedback_login_id], onDelete: Cascade, references: [login_id])
+  feedback_login_id     Int
+  feedback_submitted_on DateTime     @default(now())
+  feedback_type         FeedBackType
+  feedback_details      String
+}
+
+enum FeedBackType {
+  Bug
+  suggestion
+  compliment
+  complaint
 }
 
 enum CitizenStand {
@@ -120,7 +137,7 @@ model Case {
 model plaintiff {
   plaintiff_id         Int     @id @unique @default(autoincrement())
   plaintiff_citizen    Citizen @relation(fields: [plaintiff_citizen_id], onDelete: Cascade, references: [citizen_id])
-  plaintiff_citizen_id Int     @unique
+  plaintiff_citizen_id Int
   plaintiff_case       Case    @relation(fields: [plaitiff_case_id], onDelete: Cascade, references: [case_id])
   plaitiff_case_id     Int
 }
@@ -128,7 +145,7 @@ model plaintiff {
 model defendant {
   defendant_id         Int     @id @unique @default(autoincrement())
   defendant_citizen    Citizen @relation(fields: [defendant_citizen_id], onDelete: Cascade, references: [citizen_id])
-  defendant_citizen_id Int     @unique
+  defendant_citizen_id Int
   defendant_case       Case    @relation(fields: [defendant_case_id], onDelete: Cascade, references: [case_id])
   defendant_case_id    Int
 }

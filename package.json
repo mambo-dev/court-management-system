@@ -12,6 +12,8 @@
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.16",
     "@next/font": "13.1.6",
+    "@nivo/bar": "^0.80.0",
+    "@nivo/core": "^0.80.0",
     "@prisma/client": "^4.10.1",
     "@types/cookie": "^0.5.1",
     "@types/file-saver": "^2.0.5",
