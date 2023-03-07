@@ -149,7 +149,12 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   const casesPercentageIncrease = casesBeforeOneMonth.length
     ? ((casesAfterThreeMonths - casesBeforeOneMonth.length) /
         casesBeforeOneMonth.length) *
-      100
+        100 <=
+      0
+      ? 0
+      : ((casesAfterThreeMonths - casesBeforeOneMonth.length) /
+          casesBeforeOneMonth.length) *
+        100
     : 100;
 
   const openCasesLastMonth = casesBeforeOneMonth.filter(
@@ -159,7 +164,10 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
     (c) => c.case_status === "open"
   ).length;
   const openPercentageIncrease = openCasesLastMonth
-    ? ((openCasesThisMonth - openCasesLastMonth) / openCasesLastMonth) * 100
+    ? ((openCasesThisMonth - openCasesLastMonth) / openCasesLastMonth) * 100 <=
+      0
+      ? 0
+      : ((openCasesThisMonth - openCasesLastMonth) / openCasesLastMonth) * 100
     : 100;
 
   const closedCases = await prisma.case.findMany({
@@ -183,6 +191,11 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   const closedPercentageIncrease =
     closedCasesLastMonth <= 0
       ? 100
+      : ((closedCasesThisMonth.length - closedCasesLastMonth) /
+          closedCasesLastMonth) *
+          100 <=
+        0
+      ? 0
       : ((closedCasesThisMonth.length - closedCasesLastMonth) /
           closedCasesLastMonth) *
         100;
