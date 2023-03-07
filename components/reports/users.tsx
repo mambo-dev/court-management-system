@@ -97,7 +97,7 @@ export default function Users({ token, user }: Props) {
         <div className="grid grid-cols-1 relative">
           <div className="flex flex-col py-1 gap-y-2 ">
             <p className="text-gray-700 font-bold text-sm">user role</p>
-            <div className="flex gap-x-2 mt-auto mb-auto">
+            <div className="flex gap-x-2 mt-auto mb-auto flex-wrap gap-y-2">
               <Radio
                 handleChange={handleChange}
                 checked={
