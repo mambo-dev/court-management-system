@@ -63,7 +63,9 @@ export default async function handler(
         ],
       });
     }
+
     const { fields, files } = await parseForm(req);
+    console.log(fields);
     const noEmptyValues = handleBodyNotEmpty(fields);
 
     if (noEmptyValues.length > 0) {
@@ -73,8 +75,7 @@ export default async function handler(
       });
     }
 
-    const file = files.media;
-    let url = Array.isArray(file) ? file.map((f) => f.filepath) : file.filepath;
+    let url = Array.isArray(files) && files.map((f) => f.url);
     console.log(url);
     const {
       case_name,
@@ -121,7 +122,7 @@ export default async function handler(
             },
           },
         },
-        case_evidence: Array.isArray(url) ? [...url] : [url],
+        case_evidence: !url ? [] : [...url],
         //@ts-ignore
         case_status: `${case_status}`,
       },

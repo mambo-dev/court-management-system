@@ -72,22 +72,10 @@ export default async function handler(
         errors: [...noEmptyValues],
       });
     }
+    let url = Array.isArray(files) && files.map((f) => f.url);
+    console.log(url);
 
-    const file = files.media;
-    let url = Array.isArray(file)
-      ? file.map((f) => f?.filepath)
-      : file?.filepath;
-
-    const {
-      case_name,
-      case_desc,
-      case_hearing_date,
-      case_status,
-      case_plaint_id,
-      case_defend_id,
-      case_lawyer_id,
-      case_judge_id,
-    } = fields;
+    const { case_name, case_desc, case_hearing_date, case_status } = fields;
 
     const { case_id } = req.query;
 
@@ -100,7 +88,7 @@ export default async function handler(
         case_hearing_date: new Date(String(case_hearing_date)),
         case_name: String(case_name),
 
-        case_evidence: Array.isArray(url) ? [...url] : [url],
+        case_evidence: !url ? [] : [...url],
         //@ts-ignore
         case_status: `${case_status}`,
       },

@@ -143,8 +143,9 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
     (c) => c.case_hearing_date < lastMonth
   );
 
-  const casesAfterThreeMonths =
-    casesThisMonth.length + casesBeforeOneMonth.length - openCases.length;
+  const casesAfterThreeMonths = openCases.length - casesBeforeOneMonth.length;
+  // casesThisMonth.length + casesBeforeOneMonth.length - openCases.length;
+
   const casesPercentageIncrease = casesBeforeOneMonth.length
     ? ((casesAfterThreeMonths - casesBeforeOneMonth.length) /
         casesBeforeOneMonth.length) *
