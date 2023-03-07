@@ -1,10 +1,8 @@
 import {
-  EllipsisHorizontalIcon,
   EllipsisVerticalIcon,
   FolderPlusIcon,
   PencilSquareIcon,
   TrashIcon,
-  UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import {
   Case as CaseType,

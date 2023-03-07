@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import DashboardLayout from "../../../components/layout/dashboard";
 import Cases from "../../../components/reports/cases";
 import Users from "../../../components/reports/users";
-import Box from "../../../components/utils/box";
+
 import prisma from "../../../lib/prisma";
 import { DecodedToken } from "../../../types/types";
 

@@ -4,9 +4,9 @@ import React from "react";
 import DashboardLayout from "../../../components/layout/dashboard";
 import prisma from "../../../lib/prisma";
 import { DecodedToken } from "../../../types/types";
-import { IoDocumentsOutline } from "react-icons/io5";
+
 import DataDisp from "../../../components/utils/data-disp";
-import { subMonths, format } from "date-fns";
+import { subMonths } from "date-fns";
 import GraphDisplay from "../../../components/dashboard/graph-display";
 import Feedback from "../../../components/dashboard/feedback";
 import Head from "next/head";
