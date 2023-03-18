@@ -1,9 +1,18 @@
 import {
+  FolderIcon,
   PencilSquareIcon,
   TrashIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { Admin, Citizen, Judge, Lawyer, Login, Police } from "@prisma/client";
+import {
+  Admin,
+  Citizen,
+  FeedBack,
+  Judge,
+  Lawyer,
+  Login,
+  Police,
+} from "@prisma/client";
 import jwtDecode from "jwt-decode";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
@@ -13,6 +22,7 @@ import DashboardLayout from "../../../components/layout/dashboard";
 import AddUser from "../../../components/users/add-user";
 import DeleteUser from "../../../components/users/del-user";
 import EditUser from "../../../components/users/edit-user";
+import Feedback from "../../../components/users/feedback";
 import Button from "../../../components/utils/button";
 import Modal from "../../../components/utils/modal";
 import SidePanel from "../../../components/utils/side-panel";
@@ -24,12 +34,14 @@ type Props = {
 };
 
 export default function Users({ data }: Props) {
-  const { token, user: loggedinUser, users } = data;
+  const { token, user: loggedinUser, users, feedback } = data;
   const [openPanel, setOpenPanel] = useState(false);
   const [openEditPanel, setOpenEditPanel] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
   const userData = transform(users);
+
   const isAdmin = loggedinUser?.login_role === "admin";
   let headers;
   isAdmin
@@ -54,8 +66,8 @@ export default function Users({ data }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="w-full h-full flex flex-col gap-y-4 px-2 py-4">
-        {loggedinUser?.login_role === "admin" && (
-          <div className="w-full flex items-center justify-end ">
+        {isAdmin && (
+          <div className="w-full flex items-center justify-end gap-x-2">
             <div className="w-32">
               <Button
                 onClick={() => setOpenPanel(true)}
@@ -73,6 +85,27 @@ export default function Users({ data }: Props) {
               >
                 <AddUser token={token} />
               </SidePanel>
+            </div>
+            <div className="w-fit">
+              <Button
+                onClick={() => setOpenFeedbackModal(true)}
+                text="view user feedback"
+                type="button"
+                icon={
+                  <FolderIcon className="w-5 h-5 font-medium text-white " />
+                }
+              />
+              <Modal
+                isOpen={openFeedbackModal}
+                setIsOpen={setOpenFeedbackModal}
+                span
+              >
+                <Feedback
+                  token={token}
+                  setIsOpen={setOpenFeedbackModal}
+                  feedbacks={feedback}
+                />
+              </Modal>
             </div>
           </div>
         )}
@@ -164,6 +197,7 @@ type Data = {
       })[]
     | null;
   token: string | null;
+  feedback: FeedBack[] | [];
 };
 export type user = {
   id: number;
@@ -233,12 +267,20 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
     },
   });
 
+  let feedback: FeedBack[];
+  if (user?.login_role === "admin") {
+    feedback = await prisma.feedBack.findMany({});
+  } else {
+    feedback = [];
+  }
+
   return {
     props: {
       data: {
         token: access_token,
         users,
         user,
+        feedback: JSON.parse(JSON.stringify(feedback)),
       },
     },
   };

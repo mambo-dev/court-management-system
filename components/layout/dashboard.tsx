@@ -1,5 +1,6 @@
 import {
   Bars3Icon,
+  BuildingLibraryIcon,
   DocumentChartBarIcon,
   DocumentTextIcon,
   PresentationChartBarIcon,
@@ -50,6 +51,13 @@ const sideLinks = [
     link: "/dashboard/hearings",
     icon: (
       <Square2StackIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
+  },
+  {
+    name: "court proceedings",
+    link: "/dashboard/proceeds",
+    icon: (
+      <BuildingLibraryIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
     ),
   },
   {

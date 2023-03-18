@@ -1,5 +1,6 @@
 import {
   EllipsisVerticalIcon,
+  FolderIcon,
   FolderPlusIcon,
   PencilSquareIcon,
   TrashIcon,
@@ -61,9 +62,11 @@ export default function Case({ data }: Props) {
   const [openPanel, setOpenPanel] = useState(false);
   const [openEditPanel, setOpenEditPanel] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedCase, setSelectedCase] = useState<any | null>(null);
   const { user, token, cases } = data;
+
   const canEdit = user?.login_role === "admin" || user?.login_role === "judge";
 
   let headers;
@@ -102,8 +105,8 @@ export default function Case({ data }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="w-full h-full flex flex-col gap-y-4 px-2 py-4">
-        {(user?.login_role === "judge" || user?.login_role === "admin") && (
-          <div className="w-full flex items-center justify-end ">
+        <div className="w-full flex items-center justify-end gap-x-2">
+          {canEdit && (
             <div className="w-32">
               <Button
                 onClick={() => setOpenPanel(true)}
@@ -123,19 +126,16 @@ export default function Case({ data }: Props) {
                 <NewCase token={token} setOpenPanel={setOpenPanel} />
               </SidePanel>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <Table headers={headers}>
           {cases.map((cases) => {
             return (
               <tr key={cases.case_id} className="border-b">
-                <th
-                  scope="row"
-                  className="px-2 text-left py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
+                <td className="px-2 text-left py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {cases.case_name}
-                </th>
+                </td>
                 <td className="py-4">{truncate(cases.case_description, 20)}</td>
                 <td className="py-4">
                   {format(new Date(cases.case_hearing_date), "dd/MM/yyyy")}

@@ -202,7 +202,7 @@ export default function Hearings({ data }: Props) {
                       <TextInput
                         handleChange={handleChange}
                         value={values.hearing_outcome}
-                        label="hearing outcome"
+                        label="hearing notes"
                         name="hearing_outcome"
                         textArea
                         type=""
