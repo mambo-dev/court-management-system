@@ -7,6 +7,7 @@ type ModalProps = {
   title?: string;
   children: any;
   span?: boolean;
+  className?: string;
 };
 
 export default function Modal({
@@ -15,6 +16,7 @@ export default function Modal({
   title,
   children,
   span,
+  className,
 }: ModalProps) {
   function closeModal() {
     setIsOpen(false);
@@ -40,7 +42,7 @@ export default function Modal({
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="flex min-h-full items-center justify-center  text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -51,9 +53,11 @@ export default function Modal({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className={`w-full"" ${
-                  span ? "max-w-5xl" : "max-w-md"
-                }  relative transform overflow-hidden rounded bg-white  text-left align-middle shadow-xl transition-all`}
+                className={`${
+                  className
+                    ? className
+                    : `w-full ${span ? "max-w-5xl" : "max-w-md"}`
+                } relative transform overflow-hidden rounded bg-white  text-left align-middle shadow-xl transition-all`}
               >
                 <Dialog.Title
                   as="h3"

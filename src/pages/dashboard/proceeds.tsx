@@ -1,10 +1,15 @@
-import { Case, Hearing } from "@prisma/client";
+import { Dialog } from "@headlessui/react";
+import { Case, Hearing, Judge, Lawyer } from "@prisma/client";
 import { format, formatRelative } from "date-fns";
 import jwtDecode from "jwt-decode";
 import { GetServerSideProps } from "next";
-import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import CaseNotes from "../../../components/hearings/case-notes";
 import DashboardLayout from "../../../components/layout/dashboard";
 import DisclosureComp from "../../../components/utils/disclosure";
+import Modal from "../../../components/utils/modal";
 import prisma from "../../../lib/prisma";
 import { DecodedToken } from "../../../types/types";
 
@@ -14,6 +19,19 @@ type Props = {
 
 export default function Proceeds({ data }: Props) {
   const { token, user, hearings } = data;
+  const router = useRouter();
+  const [openNotesModal, setOpenNotesModal] = useState(
+    router.query.notes_modal === "true"
+  );
+  const findRouterHearing = hearings.filter(
+    (hearing) => hearing.hearing_id === Number(router.query.notes_hearing)
+  );
+
+  const [currentHearing, setCurrentHearing] =
+    useState<HearingWithCaseAndUsers | null>(
+      findRouterHearing.length > 0 ? findRouterHearing[0] : null
+    );
+
   return (
     <div className="w-full h-full flex flex-col gap-y-4 px-2 py-4">
       {hearings.length > 0 ? (
@@ -25,8 +43,8 @@ export default function Proceeds({ data }: Props) {
             >
               <DisclosureComp
                 button={
-                  <div className="">
-                    <span>{hearing.hearing_case.case_description}</span>
+                  <div className="flex gap-x-3">
+                    <span>{hearing.hearing_case.case_name}</span>
                     <span>
                       {formatRelative(
                         new Date(hearing.hearing_date),
@@ -38,9 +56,20 @@ export default function Proceeds({ data }: Props) {
                 panel={
                   <div className="flex flex-col gap-y-2 ">
                     <span> {hearing.hearing_case.case_description}</span>
-                    <button className="ml-auto py-3 bg-gradient-to-tr from-emerald-500  to-emerald-600 px-3 rounded text-white font-medium">
-                      take case notes
-                    </button>
+                    <Link
+                      className="ml-auto"
+                      href={`/dashboard/proceeds?notes_modal=true&&notes_hearing=${hearing.hearing_id}`}
+                    >
+                      <button
+                        onClick={() => {
+                          setOpenNotesModal(true);
+                          setCurrentHearing(hearing);
+                        }}
+                        className=" py-3 bg-gradient-to-tr from-emerald-500  to-emerald-600 px-3 rounded text-white font-medium"
+                      >
+                        take case notes
+                      </button>
+                    </Link>
                   </div>
                 }
               />
@@ -71,17 +100,41 @@ export default function Proceeds({ data }: Props) {
           </div>
         </div>
       )}
+      <Modal
+        className="max-w-screen w-screen"
+        isOpen={openNotesModal}
+        setIsOpen={setOpenNotesModal}
+      >
+        <CaseNotes
+          setOpenNotesModal={setOpenNotesModal}
+          currentHearing={currentHearing}
+        />
+      </Modal>
     </div>
   );
 }
-type HearingWithCase = Hearing & {
-  hearing_case: Case;
+
+export type HearingWithCaseAndUsers = Hearing & {
+  hearing_case: Case & {
+    plaintiff: {
+      plaintiff_citizen: {
+        citizen_full_name: string;
+      };
+    }[];
+    defendant: {
+      defendant_citizen: {
+        citizen_full_name: string;
+      };
+    }[];
+    case_lawyer: Lawyer;
+    case_judge: Judge;
+  };
 };
 
 type Data = {
   user: any;
   token: string;
-  hearings: HearingWithCase[];
+  hearings: HearingWithCaseAndUsers[];
 };
 
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
@@ -123,7 +176,34 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
   const hearings = await prisma.hearing.findMany({
     include: {
-      hearing_case: true,
+      hearing_case: {
+        include: {
+          case_judge: true,
+          case_lawyer: true,
+          defendant: {
+            select: {
+              defendant_citizen: {
+                select: {
+                  citizen_full_name: true,
+                  citizen_email: false,
+                },
+              },
+              defendant_case: false,
+            },
+          },
+          plaintiff: {
+            select: {
+              plaintiff_citizen: {
+                select: {
+                  citizen_full_name: true,
+                  citizen_email: false,
+                },
+              },
+              plaintiff_case: false,
+            },
+          },
+        },
+      },
     },
   });
 
