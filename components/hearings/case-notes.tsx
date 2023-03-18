@@ -3,6 +3,12 @@ import { Case } from "@prisma/client";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { HearingWithCaseAndUsers } from "../../src/pages/dashboard/proceeds";
+import Cookies from "js-cookie";
+import "react-quill/dist/quill.snow.css";
+
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type Props = {
   setOpenNotesModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,6 +23,23 @@ export default function CaseNotes({
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
+    const savedNote = Cookies.get("notes");
+
+    if (savedNote) {
+      setNotes(savedNote);
+    }
+  }, []);
+
+  useEffect(() => {
+    function saveNoteToCookies() {
+      Cookies.set("notes", notes, {
+        expires: 1,
+        secure: process.env.NODE_ENV !== "development",
+        domain: "localhost",
+        sameSite: "Strict",
+      });
+    }
+
     const timeoutId = setTimeout(() => {
       saveNoteToCookies();
     }, 500);
@@ -26,9 +49,9 @@ export default function CaseNotes({
     };
   }, [notes]);
 
-  function saveNoteToCookies() {
-    // Save note to cookies
-  }
+  const handleChange = (value: string) => {
+    setNotes(value);
+  };
 
   async function saveNoteToServer() {
     try {
@@ -86,7 +109,22 @@ export default function CaseNotes({
             </span>
           </div>
         </div>
-        <div> </div>
+        <div className="w-full mt-3">
+          <ReactQuill
+            value={notes}
+            onChange={handleChange}
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ["bold", "italic", "underline", "strike", "blockquote"],
+                [{ list: "ordered" }, { list: "bullet" }],
+
+                ["clean"],
+              ],
+            }}
+            className="h-full flex-1  rounded-md shadow w-full"
+          />
+        </div>
       </div>
     </div>
   );
