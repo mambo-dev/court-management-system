@@ -65,7 +65,7 @@ export default function Proceeds({ data }: Props) {
                           setOpenNotesModal(true);
                           setCurrentHearing(hearing);
                         }}
-                        className=" py-3 bg-gradient-to-tr from-emerald-500  to-emerald-600 px-3 rounded text-white font-medium"
+                        className=" py-3 bg-gradient-to-tr from-black  to-gray-700 px-3 rounded text-white font-medium"
                       >
                         take case notes
                       </button>

@@ -151,13 +151,14 @@ model defendant {
 }
 
 model Hearing {
-  hearing_id       Int           @id @unique @default(autoincrement())
-  hearing_date     DateTime
-  hearing_location String
-  hearing_outcome  String
-  hearing_status   HearingStatus
-  hearing_case     Case          @relation(fields: [hearing_case_id], onDelete: Cascade, references: [case_id])
-  hearing_case_id  Int
+  hearing_id            Int           @id @unique @default(autoincrement())
+  hearing_date          DateTime
+  hearing_location      String
+  hearing_outcome       String
+  hearing_status        HearingStatus
+  hearing_case          Case          @relation(fields: [hearing_case_id], onDelete: Cascade, references: [case_id])
+  hearing_case_id       Int
+  hearing_ongoing_notes String?
 }
 
 enum HearingStatus {
