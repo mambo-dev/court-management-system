@@ -46,7 +46,7 @@ export default function CaseNotes({
       Cookies.set("notes", notes, {
         expires: 1,
         secure: process.env.NODE_ENV !== "development",
-        domain: "localhost",
+
         sameSite: "Strict",
       });
     }

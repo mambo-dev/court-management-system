@@ -117,7 +117,7 @@ export default function Users({ data }: Props) {
                 <tr key={user.id} className="border-b">
                   <th
                     scope="row"
-                    className="px-2 text-left py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    className="px-2 text-left py-4 font-medium text-gray-900 whitespace-nowrap "
                   >
                     {user.name}
                   </th>

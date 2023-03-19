@@ -133,7 +133,7 @@ export default function Case({ data }: Props) {
           {cases.map((cases) => {
             return (
               <tr key={cases.case_id} className="border-b">
-                <td className="px-2 text-left py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td className="px-2 text-left py-4 font-medium text-gray-900 whitespace-nowrap ">
                   {cases.case_name}
                 </td>
                 <td className="py-4">{truncate(cases.case_description, 20)}</td>
