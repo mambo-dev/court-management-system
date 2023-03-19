@@ -108,6 +108,7 @@ export default function Proceeds({ data }: Props) {
         <CaseNotes
           setOpenNotesModal={setOpenNotesModal}
           currentHearing={currentHearing}
+          token={token}
         />
       </Modal>
     </div>

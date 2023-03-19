@@ -5,6 +5,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
+import Link from "next/link";
 import React from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { SingleCase } from "../../src/pages/dashboard/cases";
@@ -19,7 +20,7 @@ export default function ExpandCase({
   setOpenDetailsModal,
 }: Props) {
   return (
-    <div className="overflow-auto w-[700px] ">
+    <div className="overflow-auto w-full ">
       <div className="flex items-center justify-between ">
         <div className="px-4 py-5 sm:px-6">
           <h3 className="text-base font-semibold leading-6 text-gray-900">
@@ -204,7 +205,8 @@ export default function ExpandCase({
               >
                 {selectedCase?.Hearing.map((hearing) => {
                   return (
-                    <li
+                    <Link
+                      href={`hearings/${hearing.hearing_id}`}
                       key={hearing.hearing_id}
                       className="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                     >
@@ -218,11 +220,16 @@ export default function ExpandCase({
                         </span>
                       </div>
                       <div className="ml-4 flex-shrink-0">
-                        <p className="font-medium text-green-600 hover:text-green-500">
-                          {hearing.hearing_status}
-                        </p>
+                        <Link
+                          className="w-full"
+                          href={`dashboard/hearings/${hearing.hearing_id}`}
+                        >
+                          <p className="font-medium text-green-600 hover:text-green-500">
+                            {hearing.hearing_status}
+                          </p>
+                        </Link>
                       </div>
-                    </li>
+                    </Link>
                   );
                 })}
               </ul>

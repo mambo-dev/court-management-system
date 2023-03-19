@@ -1,4 +1,5 @@
 import {
+  BanknotesIcon,
   Bars3Icon,
   BuildingLibraryIcon,
   DocumentChartBarIcon,
@@ -58,6 +59,13 @@ const sideLinks = [
     link: "/dashboard/proceeds",
     icon: (
       <BuildingLibraryIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
+    ),
+  },
+  {
+    name: "fines",
+    link: "/dashboard/fines",
+    icon: (
+      <BanknotesIcon className="w-6 h-6 text-slate-500 group-hover:text-blue-500 group-focus:text-blue-600 " />
     ),
   },
   {

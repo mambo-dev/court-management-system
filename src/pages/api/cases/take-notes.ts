@@ -72,7 +72,9 @@ export default async function handler(
       where: {
         hearing_id: findHearing.hearing_id,
       },
-      data: {},
+      data: {
+        hearing_ongoing_notes: case_notes,
+      },
     });
 
     return res.status(200).json({

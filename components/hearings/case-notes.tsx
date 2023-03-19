@@ -18,11 +18,13 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 type Props = {
   setOpenNotesModal: React.Dispatch<React.SetStateAction<boolean>>;
   currentHearing: HearingWithCaseAndUsers | null;
+  token: string;
 };
 
 export default function CaseNotes({
   setOpenNotesModal,
   currentHearing,
+  token,
 }: Props) {
   const [warning, setWarning] = useState("");
   const [notes, setNotes] = useState("");
@@ -66,10 +68,18 @@ export default function CaseNotes({
     setLoading(true);
     setErrors([]);
     try {
-      const response = await axios.post("/api/cases/notes", {
-        notes,
-        hearing_id: currentHearing?.hearing_id,
-      });
+      const response = await axios.post(
+        "/api/cases/take-notes",
+        {
+          case_notes: notes,
+          hearing_id: currentHearing?.hearing_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const {
         data,
         errors: serverErrors,
@@ -88,9 +98,7 @@ export default function CaseNotes({
       setTimeout(() => {
         setSuccess(false);
       }, 1000);
-      setTimeout(() => {
-        router.reload();
-      }, 2000);
+
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -116,7 +124,10 @@ export default function CaseNotes({
               "make sure changes are saved before exiting!! double click the close button to close"
             )
           }
-          onDoubleClick={() => setOpenNotesModal(false)}
+          onDoubleClick={() => {
+            setOpenNotesModal(false);
+            router.push("/dashboard/proceeds");
+          }}
           className="outline-none focus:ring-1 ring-gray-300 ml-auto bg-gradient-to-tr from-black  to-gray-500  w-10 h-10 inline-flex items-center justify-center text-white rounded-full"
         >
           <XMarkIcon className="w-8 h-8" />
