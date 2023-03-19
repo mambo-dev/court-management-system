@@ -19,7 +19,7 @@ type Props = {
 
 export default function Feedback({ token, setIsOpen, feedbacks }: Props) {
   return (
-    <div className="w-full md:w-[500px] px-2 py-5">
+    <div className="w-full md:w-full px-2 py-5">
       <ul
         role="list"
         className="divide-y divide-gray-200 rounded-md border border-gray-200"
