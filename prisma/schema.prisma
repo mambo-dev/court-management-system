@@ -58,6 +58,7 @@ model Citizen {
   citizen_login_id     Int           @unique
   plaintiff            plaintiff[]
   defendant            defendant[]
+  Payment              Payment[]
 }
 
 model FeedBack {
@@ -132,6 +133,7 @@ model Case {
   Hearing           Hearing[]
   plaintiff         plaintiff[]
   defendant         defendant[]
+  Payment           Payment[]
 }
 
 model plaintiff {
@@ -159,6 +161,16 @@ model Hearing {
   hearing_case          Case          @relation(fields: [hearing_case_id], onDelete: Cascade, references: [case_id])
   hearing_case_id       Int
   hearing_ongoing_notes String?
+}
+
+model Payment {
+  payment_id           Int      @id @unique @default(autoincrement())
+  payment_date         DateTime @default(now())
+  payment_case         Case     @relation(fields: [payment_case_id], onDelete: Cascade, references: [case_id])
+  payment_case_id      Int
+  defendant_citizen    Citizen  @relation(fields: [defendant_citizen_id], onDelete: Cascade, references: [citizen_id])
+  defendant_citizen_id Int
+  payment_amount       Int
 }
 
 enum HearingStatus {

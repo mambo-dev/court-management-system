@@ -30,7 +30,7 @@ export default function GraphDisplay({
     },
   ];
   return (
-    <div className="h-[500px] w-full col-span-3 md:col-span-2 bg-white rounded shadow border border-slate-300 flex items-center justify-center px-2 py-4">
+    <div className=" relative h-[500px] w-full col-span-3 md:col-span-2 bg-white rounded shadow border border-slate-300 flex items-center justify-center px-2 py-4">
       <ResponsiveBar
         data={data}
         keys={["value"]}
