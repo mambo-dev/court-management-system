@@ -10,8 +10,8 @@ import { Hearing, Payment } from "@prisma/client";
 import { handleBodyNotEmpty } from "../../../../utils/validation";
 import axios from "axios";
 type Response = {
-  data: Payment | null;
-  errors: Error[] | null;
+  data: boolean | null;
+  errors: Error[] | [];
 };
 
 export default async function handler(
@@ -54,7 +54,18 @@ export default async function handler(
       },
     });
 
-    const { payment_amount, payment_citizen_id, payment_case_id } = req.body;
+    if (user?.login_role !== "citizen") {
+      return res.status(200).json({
+        data: null,
+        errors: [
+          {
+            message: "only citizens pay fines",
+          },
+        ],
+      });
+    }
+
+    const { payment_amount, payment_case_id } = req.body;
 
     const noEmptyValues = handleBodyNotEmpty(req.body);
 
@@ -71,51 +82,51 @@ export default async function handler(
       },
     });
 
-    //insert payment from mpesa
-
-    const response = await axios.post(
-      `${process.env.SAFARICOM_API_ENDPOINT}`,
-      {
-        BusinessShortCode: 247247,
-        Password:
-          "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwMzI5MTIwNDU1",
-        Timestamp: "20230329120455",
-        TransactionType: "CustomerPayBillOnline",
-        Amount: 1,
-        PartyA: 254741882041,
-        PartyB: 247247,
-        PhoneNumber: 254741882041,
-        CallBackURL: "http://localhost:3000",
-        AccountReference: "JudicialSystem",
-        TransactionDesc: `Payment of fine for ${findCase?.case_name} `,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.SAFARICOM_API_ENDPOINT}`,
-        },
-      }
-    );
-
-    if (response.data) {
-      console.log(response.data);
+    if (!findCase) {
       return res.status(200).json({
         data: null,
         errors: [
           {
-            message: "we succesfully sent a request",
+            message: "did not find case",
           },
         ],
       });
     }
 
-    const new_payment = await prisma.payment.create({
+    //insert payment from mpesa
+
+    const data = JSON.stringify({
+      BusinessShortCode: 174379,
+      Password:
+        "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwMzI5MTUzNzI4",
+      Timestamp: "20230329153728",
+      TransactionType: "CustomerPayBillOnline",
+      Amount: Number(payment_amount),
+      PartyA: Number(process.env.TEST_NUMBER),
+      PartyB: 174379,
+      PhoneNumber: Number(process.env.TEST_NUMBER),
+      CallBackURL: process.env.NEXT_CALLBACK_URL,
+      AccountReference: "judicial",
+      TransactionDesc: "Payment of X",
+    });
+    const response = await axios.post(
+      `https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ErbFLjmm7ZsS0n70TaWSACP7AU1e`,
+        },
+      }
+    );
+
+    await prisma.payment.create({
       data: {
-        payment_amount,
+        payment_amount: Number(payment_amount),
 
         defendant_citizen: {
           connect: {
-            citizen_id: payment_citizen_id,
+            citizen_id: user?.Citizen?.citizen_id,
           },
         },
         payment_case: {
@@ -127,10 +138,11 @@ export default async function handler(
     });
 
     return res.status(200).json({
-      data: new_payment,
-      errors: null,
+      data: true,
+      errors: [],
     });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({
       data: null,
       errors: [{ message: error.message }],

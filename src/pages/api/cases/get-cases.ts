@@ -39,7 +39,7 @@ export default async function handler(
     }
 
     const { query } = req.query;
-    console.log(query, await prisma.case.findMany({}));
+
     const getCases = await prisma.case.findMany({
       where: {
         case_name: {

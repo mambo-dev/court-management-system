@@ -60,7 +60,7 @@ export default function NewCase({ token, setOpenPanel, selectedCase }: Props) {
       });
 
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/cases/edit-case?case_id=${selectedCase.case_id}`,
+        `/api/cases/edit-case?case_id=${selectedCase.case_id}`,
 
         formData,
 

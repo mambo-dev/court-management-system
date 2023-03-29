@@ -20,14 +20,11 @@ export default function DelCase({ selectedCase, token, setIsOpen }: Props) {
   const handleDelete = () => {
     setLoading(true);
     axios
-      .delete(
-        `${process.env.NEXT_PUBLIC_URL}/api/cases/del-case?case_id=${selectedCase.case_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      .delete(`/api/cases/del-case?case_id=${selectedCase.case_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         setLoading(false);
         setSuccess(true);

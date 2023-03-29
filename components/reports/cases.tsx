@@ -38,7 +38,7 @@ export default function Cases({ token, user }: Props) {
     setErrors([]);
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/reports/cases`,
+        `/api/reports/cases`,
         {
           ...values,
           case_judge_name: judge.full_name,

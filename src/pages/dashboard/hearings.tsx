@@ -49,7 +49,7 @@ export default function Hearings({ data }: Props) {
     setErrors([]);
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/hearings/make-judgement`,
+        `/api/hearings/make-judgement`,
 
         {
           ...values,

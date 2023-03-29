@@ -38,7 +38,7 @@ export default function EditUser({ user, token }: Props) {
     setLoading(true);
     axios
       .put(
-        `${process.env.NEXT_PUBLIC_URL}/api/users/edit-user?user_id=${user?.id}`,
+        `/api/users/edit-user?user_id=${user?.id}`,
         {
           ...values,
         },

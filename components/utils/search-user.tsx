@@ -25,14 +25,11 @@ export default function SearchUser({
     if (debouncedSearch) {
       setLoading(true);
       axios
-        .get(
-          `${process.env.NEXT_PUBLIC_URL}/api/users/get-users?query=${query}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+        .get(`/api/users/get-users?query=${query}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setLoading(false);
           setUsers(response.data.data);

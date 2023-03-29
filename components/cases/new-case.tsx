@@ -79,7 +79,7 @@ export default function NewCase({ token, setOpenPanel }: Props) {
       console.log(formData);
 
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/cases/new-case`,
+        `/api/cases/new-case`,
 
         formData,
         {

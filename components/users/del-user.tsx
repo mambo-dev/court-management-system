@@ -19,14 +19,11 @@ export default function DeleteUser({ user, token, setIsOpen }: Props) {
   const handleDelete = () => {
     setLoading(true);
     axios
-      .delete(
-        `${process.env.NEXT_PUBLIC_URL}/api/users/del-user?user_id=${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      .delete(`/api/users/del-user?user_id=${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         setLoading(false);
         setSuccess(true);

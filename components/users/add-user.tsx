@@ -39,7 +39,7 @@ export default function AddUser({ token }: Props) {
     setErrors([]);
     axios
       .post(
-        `${process.env.NEXT_PUBLIC_URL}/api/users/add-user`,
+        `/api/users/add-user`,
         {
           ...values,
           password: values.nationalId,

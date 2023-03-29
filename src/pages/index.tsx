@@ -26,7 +26,7 @@ export default function Home() {
     setLoading(true);
 
     axios
-      .post(`${process.env.NEXT_PUBLIC_URL}/api/auth/login`, {
+      .post(`/api/auth/login`, {
         ...values,
       })
       .then((response) => {

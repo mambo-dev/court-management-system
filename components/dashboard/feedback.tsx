@@ -31,7 +31,7 @@ export default function Feedback({ user, token }: Props) {
     setErrors([]);
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/dashboard/feedback`,
+        `/api/dashboard/feedback`,
         {
           ...values,
           feedback_login_id: user?.login_id,

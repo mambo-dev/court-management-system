@@ -26,14 +26,11 @@ export default function SearchCase({
     if (debouncedSearch) {
       setLoading(true);
       axios
-        .get(
-          `${process.env.NEXT_PUBLIC_URL}/api/cases/get-cases?query=${query}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+        .get(`/api/cases/get-cases?query=${query}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setLoading(false);
           setCases(response.data.data);

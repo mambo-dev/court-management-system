@@ -28,7 +28,7 @@ export default function Users({ token, user }: Props) {
     setErrors([]);
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/api/reports/users`,
+        `/api/reports/users`,
         {
           ...values,
         },
