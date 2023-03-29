@@ -115,7 +115,7 @@ export default async function handler(
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ErbFLjmm7ZsS0n70TaWSACP7AU1e`,
+          Authorization: `Bearer ${process.env.SAFARICOM_BEARER_TOKEN}`,
         },
       }
     );
